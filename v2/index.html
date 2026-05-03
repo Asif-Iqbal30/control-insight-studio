@@ -1,1004 +1,1372 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control Insight Studio — MEEN 5600</title>
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Insight Studio — MEEN 5600</title>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
+    rel="stylesheet">
 
-<style>
-:root {
-  --unt: #00853E;
-  --unt-dark: #005c2b;
-  --unt-light: #00a84f;
-  --bg: #0c0e12;
-  --surface: #13161d;
-  --card: #181c26;
-  --card2: #1e2333;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.12);
-  --text: #dde3f0;
-  --muted: #6b7494;
-  --dim: #3d4460;
-  --blue: #3d8ef0;
-  --cyan: #00c9d4;
-  --amber: #f0a23d;
-  --red: #ef4545;
-  --yellow: #f0d23d;
-  --green: #22c55e;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'DM Sans', sans-serif;
-}
-[data-theme="light"] {
-  --bg: #f0f2f7;
-  --surface: #ffffff;
-  --card: #f8f9fc;
-  --card2: #eef0f6;
-  --border: rgba(0,0,0,0.08);
-  --border2: rgba(0,0,0,0.14);
-  --text: #1a1f2e;
-  --muted: #5a6282;
-  --dim: #b0b8d4;
-}
+  <style>
+    :root {
+      --unt: #00853E;
+      --unt-dark: #005c2b;
+      --unt-light: #00a84f;
+      --bg: #0c0e12;
+      --surface: #13161d;
+      --card: #181c26;
+      --card2: #1e2333;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.12);
+      --text: #dde3f0;
+      --muted: #6b7494;
+      --dim: #3d4460;
+      --blue: #3d8ef0;
+      --cyan: #00c9d4;
+      --amber: #f0a23d;
+      --red: #ef4545;
+      --yellow: #f0d23d;
+      --green: #22c55e;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100vh; overflow: hidden; }
+    [data-theme="light"] {
+      --bg: #f0f2f7;
+      --surface: #ffffff;
+      --card: #f8f9fc;
+      --card2: #eef0f6;
+      --border: rgba(0, 0, 0, 0.08);
+      --border2: rgba(0, 0, 0, 0.14);
+      --text: #1a1f2e;
+      --muted: #5a6282;
+      --dim: #b0b8d4;
+    }
 
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* ── HEADER ── */
-.hdr {
-  background: #00853E;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  height: 56px;
-  flex-shrink: 0;
-  position: relative;
-}
-.hdr-brand { display: flex; align-items: center; gap: 14px; }
-.hdr-badge {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 5px;
-  padding: 4px 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: rgba(255,255,255,0.85);
-  line-height: 1.4;
-  text-align: center;
-}
-.hdr-title {
-  position: absolute;
-  left: 50%; transform: translateX(-50%);
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
-}
-.hdr-sub { font-size: 10px; opacity: 0.7; font-weight: 300; }
-.hdr-actions { display: flex; align-items: center; gap: 10px; }
-.stab-pill {
-  display: flex; align-items: center; gap: 7px;
-  padding: 5px 14px;
-  border-radius: 20px;
-  border: 1px solid;
-  font-size: 13px; font-weight: 600; font-family: var(--mono);
-  cursor: default; transition: all 0.3s;
-}
-.stab-pill.stable { color: var(--green); border-color: var(--green); background: rgba(34,197,94,0.08); }
-.stab-pill.marginal { color: var(--yellow); border-color: var(--yellow); background: rgba(240,210,61,0.08); }
-.stab-pill.unstable { color: var(--red); border-color: var(--red); background: rgba(239,69,69,0.08); }
-.stab-dot { width: 8px; height: 8px; border-radius: 50%; }
-.hdr-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: rgba(255,255,255,0.85);
-  padding: 5px 13px;
-  border-radius: 5px;
-  font-family: var(--sans);
-  font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: background 0.15s;
-}
-.hdr-btn:hover { background: rgba(255,255,255,0.16); }
+    html,
+    body {
+      height: 100vh;
+      overflow: hidden;
+    }
 
-/* ── LAYOUT ── */
-.workspace {
-  display: grid;
-  grid-template-columns: 264px 1fr 264px;
-  gap: 0;
-  flex: 1;
-  overflow: hidden;
-}
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+    }
 
-/* ── SIDEBAR SHARED ── */
-.sidebar {
-  background: var(--surface);
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.sidebar::-webkit-scrollbar { width: 3px; }
-.sidebar::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
-.sidebar-section {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.sec-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-.sec-title {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--unt-light);
-  padding: 12px 16px 6px;
-  border-bottom: 1px solid var(--border);
-}
+    /* ── HEADER ── */
+    .hdr {
+      background: #00853E;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 56px;
+      flex-shrink: 0;
+      position: relative;
+    }
 
-/* SELECT */
-select {
-  width: 100%;
-  padding: 7px 28px 7px 10px;
-  background: var(--card);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: 6px;
-  font-family: var(--sans);
-  font-size: 12px;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7494'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  cursor: pointer; outline: none;
-}
-select:focus { border-color: var(--unt); }
+    .hdr-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-/* TF DISPLAY */
-.tf-box {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 12px;
-  margin-top: 10px;
-  min-height: 52px;
-  display: flex; align-items: center; justify-content: center;
-  text-align: center; overflow-x: auto;
-  color: var(--cyan);
-  font-size: 12px;
-}
+    .hdr-badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.4;
+      text-align: center;
+    }
 
-/* CUSTOM INPUT */
-.custom-block {
-  display: none;
-  margin-top: 10px;
-  padding: 10px;
-  background: var(--card);
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-}
-.custom-block label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; margin-top: 8px; }
-.custom-block label:first-child { margin-top: 0; }
-.custom-block input {
-  width: 100%; padding: 5px 8px;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: 4px; font-family: var(--mono); font-size: 11px;
-}
-.apply-btn {
-  width: 100%; margin-top: 8px;
-  background: var(--unt);
-  border: none; color: #fff;
-  padding: 6px; border-radius: 4px;
-  font-family: var(--sans); font-size: 12px; font-weight: 600;
-  cursor: pointer; transition: background 0.15s;
-}
-.apply-btn:hover { background: var(--unt-light); }
+    .hdr-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
 
-/* SLIDERS */
-.slider-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 9px;
-}
-.slider-lbl {
-  font-family: var(--mono);
-  font-size: 12px; font-weight: 600;
-  width: 22px; flex-shrink: 0;
-}
-.slider-row input[type=range] {
-  flex: 1; height: 3px;
-  appearance: none;
-  background: var(--dim);
-  border-radius: 2px;
-  outline: none; cursor: pointer;
-}
-.slider-row input[type=range]::-webkit-slider-thumb {
-  appearance: none; width: 14px; height: 14px;
-  border-radius: 50%; cursor: pointer;
-  transition: transform 0.1s;
-}
-.slider-row input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-#kpSlider::-webkit-slider-thumb { background: var(--blue); }
-#kiSlider::-webkit-slider-thumb { background: #a78bfa; }
-#kdSlider::-webkit-slider-thumb { background: var(--amber); }
-.num-input {
-  width: 48px; padding: 3px 6px;
-  background: var(--card2);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: 4px;
-  font-family: var(--mono); font-size: 11px;
-  text-align: right; outline: none;
-}
+    .hdr-sub {
+      font-size: 10px;
+      opacity: 0.7;
+      font-weight: 300;
+    }
 
-/* PRESETS */
-.preset-row { display: flex; gap: 5px; }
-.preset-btn {
-  flex: 1; padding: 5px 0;
-  background: var(--card);
-  border: 1px solid var(--border2);
-  color: var(--muted);
-  border-radius: 4px;
-  font-family: var(--sans); font-size: 11px; font-weight: 500;
-  cursor: pointer; transition: all 0.15s; text-align: center;
-}
-.preset-btn:hover { color: var(--text); border-color: var(--border2); background: var(--card2); }
-.preset-btn.active { background: rgba(0,133,62,0.15); border-color: var(--unt); color: var(--unt-light); }
+    .hdr-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-/* CTRL DISPLAY */
-.ctrl-box {
-  margin: 10px 16px 14px;
-  padding: 10px 12px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-}
-.ctrl-box .mono-label { font-family: var(--mono); font-size: 9px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; }
-.ctrl-formula { color: var(--cyan); font-size: 11px; text-align: center; }
+    .stab-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--mono);
+      cursor: default;
+      transition: all 0.3s;
+    }
 
-/* ── CENTER ── */
-.center {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  overflow: hidden;
-}
+    .stab-pill.stable {
+      color: var(--green);
+      border-color: var(--green);
+      background: rgba(34, 197, 94, 0.08);
+    }
 
-.plot-card {
-  background: var(--surface);
-  display: flex; flex-direction: column;
-  overflow: hidden;
-  position: relative;
-}
-.plot-card + .plot-card { border-top: 1px solid var(--border); }
+    .stab-pill.marginal {
+      color: var(--yellow);
+      border-color: var(--yellow);
+      background: rgba(240, 210, 61, 0.08);
+    }
 
-.plot-hdr {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.plot-name {
-  font-family: var(--mono);
-  font-size: 11px; font-weight: 600;
-  color: var(--unt-light);
-  letter-spacing: 0.5px;
-}
-.plot-badges { display: flex; gap: 6px; }
-.badge {
-  font-family: var(--mono);
-  font-size: 9px; font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 3px;
-  letter-spacing: 0.5px;
-}
-.badge-green { background: rgba(0,133,62,0.15); color: var(--unt-light); border: 1px solid rgba(0,133,62,0.3); }
-.badge-blue  { background: rgba(61,142,240,0.12); color: var(--blue); border: 1px solid rgba(61,142,240,0.3); }
-.badge-cyan  { background: rgba(0,201,212,0.1); color: var(--cyan); border: 1px solid rgba(0,201,212,0.25); }
-.badge-red   { background: rgba(239,69,69,0.1); color: var(--red); border: 1px solid rgba(239,69,69,0.25); }
+    .stab-pill.unstable {
+      color: var(--red);
+      border-color: var(--red);
+      background: rgba(239, 69, 69, 0.08);
+    }
 
-.plot-body { flex: 1; min-height: 0; display: flex; gap: 0; overflow: hidden; }
-.plotly-wrap { flex: 1; min-width: 0; min-height: 0; }
+    .stab-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
 
-/* BODE SPLIT */
-.bode-split { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.bode-half { flex: 1; min-height: 0; position: relative; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
-.bode-half:last-child { border-bottom: none; }
-.bode-sublabel {
-  margin: 8px 0 0 44px; flex-shrink: 0;
-  font-family: var(--mono); font-size: 10px; font-weight: 600;
-  color: var(--muted); letter-spacing: 0.5px; z-index: 2;
-}
+    .hdr-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.85);
+      padding: 5px 13px;
+      border-radius: 5px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
 
-/* METRICS SIDEBAR (inside center) */
-.metrics-col {
-  width: 182px; flex-shrink: 0;
-  border-left: 1px solid var(--border);
-  padding: 12px 14px;
-  display: flex; flex-direction: column; gap: 3px;
-  overflow-y: auto;
-}
-.metrics-col::-webkit-scrollbar { width: 0; }
-.mhdr { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.mrow {
-  display: flex; justify-content: space-between; align-items: baseline;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--border);
-  gap: 6px;
-}
-.mrow:last-child { border-bottom: none; }
-.mlbl { font-size: 11px; color: var(--muted); white-space: nowrap; }
-.mval { font-family: var(--mono); font-size: 12px; font-weight: 600; white-space: nowrap; }
-.mval.green { color: var(--green); }
-.mval.yellow { color: var(--yellow); }
-.mval.red { color: var(--red); }
-.mval.blue { color: var(--blue); }
-.mval.cyan { color: var(--cyan); }
+    .hdr-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
 
-/* ── RIGHT PANEL ── */
-.right-panel { background: var(--surface); display: flex; flex-direction: column; overflow-y: auto; }
-.right-panel::-webkit-scrollbar { width: 3px; }
-.right-panel::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
+    /* ── LAYOUT ── */
+    .workspace {
+      display: grid;
+      grid-template-columns: 264px 1fr 264px;
+      gap: 0;
+      flex: 1;
+      overflow: hidden;
+    }
 
-/* CHECKLIST */
-.chk-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-}
-.chk-item:last-child { border-bottom: none; }
-.chk-lbl { color: var(--muted); }
-.chk-icon { font-size: 13px; width: 18px; text-align: center; }
+    /* ── SIDEBAR SHARED ── */
+    .sidebar {
+      background: var(--surface);
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* POLE MAP */
-.pole-map-wrap {
-  flex: 0 0 220px;
-  margin: 0 14px 12px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-}
+    .sidebar::-webkit-scrollbar {
+      width: 3px;
+    }
 
-/* LIVE TIP */
-.tip-box {
-  margin: 0 14px 14px;
-  padding: 10px 12px;
-  background: rgba(0,133,62,0.07);
-  border: 1px solid rgba(0,133,62,0.2);
-  border-radius: 6px;
-  font-size: 11px;
-  color: var(--text);
-  line-height: 1.6;
-}
-.tip-box strong { color: var(--unt-light); }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--dim);
+      border-radius: 2px;
+    }
 
-/* DOM POLE BADGE */
-.dom-pole {
-  margin: 0 14px 10px;
-  padding: 7px 10px;
-  background: rgba(61,142,240,0.08);
-  border: 1px solid rgba(61,142,240,0.2);
-  border-radius: 5px;
-  font-family: var(--mono);
-  font-size: 10px; color: var(--blue);
-  text-align: center; line-height: 1.6;
-}
+    .sidebar-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
 
-/* POLE INFO */
-.pole-info-box {
-  margin: 0 14px 12px;
-  font-family: var(--mono);
-  font-size: 10px; color: var(--muted);
-  line-height: 2; padding: 0 2px;
-}
+    .sec-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
 
-/* MODAL */
-.modal-bg {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.65);
-  z-index: 100;
-  display: none; align-items: center; justify-content: center;
-}
-.modal-bg.show { display: flex; }
-.modal-box {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 26px 28px;
-  max-width: 480px; width: 90%;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-}
-.modal-box h2 { color: var(--unt-light); font-size: 16px; margin-bottom: 14px; }
-.modal-box p { color: var(--muted); font-size: 13px; line-height: 1.65; margin-bottom: 10px; }
-.modal-box p strong { color: var(--text); }
-.modal-close { width: 100%; background: var(--unt); border: none; color: #fff; padding: 9px; border-radius: 5px; cursor: pointer; font-weight: 600; font-family: var(--sans); margin-top: 6px; }
+    .sec-title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--unt-light);
+      padding: 12px 16px 6px;
+      border-bottom: 1px solid var(--border);
+    }
 
-/* DIVIDER */
-.divider { height: 1px; background: var(--border); margin: 4px 16px; }
-</style>
+    /* SELECT */
+    select {
+      width: 100%;
+      padding: 7px 28px 7px 10px;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 12px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7494'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: var(--unt);
+    }
+
+    /* TF DISPLAY */
+    .tf-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow-x: auto;
+      color: var(--cyan);
+      font-size: 12px;
+    }
+
+    /* CUSTOM INPUT */
+    .custom-block {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+    }
+
+    .custom-block label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+
+    .custom-block label:first-child {
+      margin-top: 0;
+    }
+
+    .custom-block input {
+      width: 100%;
+      padding: 5px 8px;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .apply-btn {
+      width: 100%;
+      margin-top: 8px;
+      background: var(--unt);
+      border: none;
+      color: #fff;
+      padding: 6px;
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .apply-btn:hover {
+      background: var(--unt-light);
+    }
+
+    /* SLIDERS */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+
+    .slider-lbl {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      width: 22px;
+      flex-shrink: 0;
+    }
+
+    .slider-row input[type=range] {
+      flex: 1;
+      height: 3px;
+      appearance: none;
+      background: var(--dim);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .slider-row input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .slider-row input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    #kpSlider::-webkit-slider-thumb {
+      background: var(--blue);
+    }
+
+    #kiSlider::-webkit-slider-thumb {
+      background: #a78bfa;
+    }
+
+    #kdSlider::-webkit-slider-thumb {
+      background: var(--amber);
+    }
+
+    .num-input {
+      width: 48px;
+      padding: 3px 6px;
+      background: var(--card2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 11px;
+      text-align: right;
+      outline: none;
+    }
+
+    /* PRESETS */
+    .preset-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .preset-btn {
+      flex: 1;
+      padding: 5px 0;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      color: var(--text);
+      border-color: var(--border2);
+      background: var(--card2);
+    }
+
+    .preset-btn.active {
+      background: rgba(0, 133, 62, 0.15);
+      border-color: var(--unt);
+      color: var(--unt-light);
+    }
+
+    /* CTRL DISPLAY */
+    .ctrl-box {
+      margin: 10px 16px 14px;
+      padding: 10px 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .ctrl-box .mono-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .ctrl-formula {
+      color: var(--cyan);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    /* ── CENTER ── */
+    .center {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .plot-card {
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .plot-card+.plot-card {
+      border-top: 1px solid var(--border);
+    }
+
+    .plot-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .plot-name {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--unt-light);
+      letter-spacing: 0.5px;
+    }
+
+    .plot-badges {
+      display: flex;
+      gap: 6px;
+    }
+
+    .badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-green {
+      background: rgba(0, 133, 62, 0.15);
+      color: var(--unt-light);
+      border: 1px solid rgba(0, 133, 62, 0.3);
+    }
+
+    .badge-blue {
+      background: rgba(61, 142, 240, 0.12);
+      color: var(--blue);
+      border: 1px solid rgba(61, 142, 240, 0.3);
+    }
+
+    .badge-cyan {
+      background: rgba(0, 201, 212, 0.1);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 201, 212, 0.25);
+    }
+
+    .badge-red {
+      background: rgba(239, 69, 69, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(239, 69, 69, 0.25);
+    }
+
+    .plot-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .plotly-wrap {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    /* BODE SPLIT */
+    .bode-split {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .bode-half {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bode-half:last-child {
+      border-bottom: none;
+    }
+
+    .bode-sublabel {
+      margin: 8px 0 0 44px;
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+
+    /* METRICS SIDEBAR (inside center) */
+    .metrics-col {
+      width: 182px;
+      flex-shrink: 0;
+      border-left: 1px solid var(--border);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      overflow-y: auto;
+    }
+
+    .metrics-col::-webkit-scrollbar {
+      width: 0;
+    }
+
+    .mhdr {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .mrow {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 6px;
+    }
+
+    .mrow:last-child {
+      border-bottom: none;
+    }
+
+    .mlbl {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .mval {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .mval.green {
+      color: var(--green);
+    }
+
+    .mval.yellow {
+      color: var(--yellow);
+    }
+
+    .mval.red {
+      color: var(--red);
+    }
+
+    .mval.blue {
+      color: var(--blue);
+    }
+
+    .mval.cyan {
+      color: var(--cyan);
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .right-panel::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    .right-panel::-webkit-scrollbar-thumb {
+      background: var(--dim);
+      border-radius: 2px;
+    }
+
+    /* CHECKLIST */
+    .chk-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .chk-item:last-child {
+      border-bottom: none;
+    }
+
+    .chk-lbl {
+      color: var(--muted);
+    }
+
+    .chk-icon {
+      font-size: 13px;
+      width: 18px;
+      text-align: center;
+    }
+
+    /* POLE MAP */
+    .pole-map-wrap {
+      flex: 0 0 220px;
+      margin: 0 14px 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    /* LIVE TIP */
+    .tip-box {
+      margin: 0 14px 14px;
+      padding: 10px 12px;
+      background: rgba(0, 133, 62, 0.07);
+      border: 1px solid rgba(0, 133, 62, 0.2);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .tip-box strong {
+      color: var(--unt-light);
+    }
+
+    /* DOM POLE BADGE */
+    .dom-pole {
+      margin: 0 14px 10px;
+      padding: 7px 10px;
+      background: rgba(61, 142, 240, 0.08);
+      border: 1px solid rgba(61, 142, 240, 0.2);
+      border-radius: 5px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--blue);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* POLE INFO */
+    .pole-info-box {
+      margin: 0 14px 12px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 2;
+      padding: 0 2px;
+    }
+
+    /* MODAL */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-bg.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 26px 28px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-box h2 {
+      color: var(--unt-light);
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+
+    .modal-box p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+
+    .modal-box p strong {
+      color: var(--text);
+    }
+
+    .modal-close {
+      width: 100%;
+      background: var(--unt);
+      border: none;
+      color: #fff;
+      padding: 9px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: var(--sans);
+      margin-top: 6px;
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 16px;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- HEADER -->
-<div class="hdr">
-  <div class="hdr-brand" style="gap: 12px;">
-    <div style="display:flex;align-items:center;">
-      <img src="unts-genericnewsimage_unt.png" alt="UNT Logo" style="height:32px;object-fit:contain;">
-    </div>
-    <div style="display:flex;flex-direction:column;justify-content:center;">
-      <div style="font-size:13px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;color:#fff;line-height:1.1;">MEEN 5600 &ndash; Spring 2026</div>
-      <div style="font-size:13px;font-family:Arial, Helvetica, sans-serif;color:#fff;font-weight:400;line-height:1.2;margin-top:1px;">University of North Texas</div>
-    </div>
-  </div>
-
-  <div class="hdr-title">Control Insight Studio</div>
-
-  <div class="hdr-actions">
-    <div class="stab-pill stable" id="stabPill">
-      <span class="stab-dot" id="stabDot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></span>
-      <span id="stabText">Stable</span>
-    </div>
-    <button class="hdr-btn" id="helpBtn">How to Use</button>
-    <button class="hdr-btn" id="themeBtn">Theme</button>
-  </div>
-</div>
-
-<!-- HELP MODAL -->
-<div class="modal-bg" id="helpModal">
-  <div class="modal-box">
-    <h2>How to Use Control Insight Studio</h2>
-    <p><strong>1. Select a Plant G(s):</strong> Choose a standard transfer function. For custom plants, select "Custom" and enter numerator/denominator polynomial coefficients separated by commas (highest power first).</p>
-    <p><strong>2. Tune PID Gains:</strong> Use sliders for Kp, Ki, Kd or type values directly. All charts update in real-time.</p>
-    <p><strong>3. Read the Step Response:</strong> Rise time, overshoot, and settling time are computed from the closed-loop simulation. A dashed line marks the reference (1.0).</p>
-    <p><strong>4. Read the Bode Plots:</strong> Gain Margin (GM) and Phase Margin (PM) are marked. PM &gt; 45° typically indicates robust stability.</p>
-    <p><strong>5. Pole Map:</strong> Blue × = dominant pole pair; gray × = other poles. All poles in the LHP (left of imaginary axis) = stable.</p>
-    <button class="modal-close" id="closeHelp">Got it!</button>
-  </div>
-</div>
-
-<!-- WORKSPACE -->
-<div class="workspace">
-
-  <!-- ── LEFT: CONTROLLER SETUP ── -->
-  <div class="sidebar">
-    <div class="sec-title">① Controller Setup</div>
-
-    <div class="sidebar-section">
-      <div class="sec-label">Plant G(s)</div>
-      <select id="plantSelect">
-        <option value="1">1st Order: 1/(s+1)</option>
-        <option value="2_under" selected>2nd Order (underdamped)</option>
-        <option value="2_over">2nd Order (overdamped)</option>
-        <option value="3">3rd Order</option>
-        <option value="unstable">Unstable Plant</option>
-        <option value="custom">Custom Transfer Function</option>
-      </select>
-
-      <div class="custom-block" id="customBlock">
-        <label>Numerator coefficients</label>
-        <input type="text" id="customNum" value="100" placeholder="e.g. 100">
-        <label>Denominator coefficients</label>
-        <input type="text" id="customDen" value="1, 2, 100" placeholder="e.g. 1, 2, 100">
-        <button class="apply-btn" id="applyCustom">Apply</button>
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-brand" style="gap: 12px;">
+      <div style="display:flex;align-items:center;">
+        <img src="unts-genericnewsimage_unt.png" alt="UNT Logo" style="height:32px;object-fit:contain;">
       </div>
-
-      <div class="tf-box" id="mathDisplay">G(s) = ...</div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sec-label">PID Gains</div>
-      <div class="slider-row">
-        <span class="slider-lbl" style="color:var(--blue)">Kp</span>
-        <input type="range" id="kpSlider" min="0" max="100" step="0.5" value="25">
-        <input type="number" class="num-input" id="kpVal" value="25" min="0" max="100" step="0.5">
-      </div>
-      <div class="slider-row">
-        <span class="slider-lbl" style="color:#a78bfa">Ki</span>
-        <input type="range" id="kiSlider" min="0" max="50" step="0.1" value="0">
-        <input type="number" class="num-input" id="kiVal" value="0" min="0" max="50" step="0.1">
-      </div>
-      <div class="slider-row">
-        <span class="slider-lbl" style="color:var(--amber)">Kd</span>
-        <input type="range" id="kdSlider" min="0" max="20" step="0.1" value="1">
-        <input type="number" class="num-input" id="kdVal" value="1" min="0" max="20" step="0.1">
+      <div style="display:flex;flex-direction:column;justify-content:center;">
+        <div
+          style="font-size:13px;font-family:Arial, Helvetica, sans-serif;font-weight:bold;color:#fff;line-height:1.1;">
+          MEEN 5600 &ndash; Spring 2026</div>
+        <div
+          style="font-size:13px;font-family:Arial, Helvetica, sans-serif;color:#fff;font-weight:400;line-height:1.2;margin-top:1px;">
+          University of North Texas</div>
       </div>
     </div>
 
-    <div class="sidebar-section">
-      <div class="sec-label" style="margin-bottom:6px;">Controller Type</div>
-      <div class="preset-row" style="margin-bottom:8px;">
-        <button class="preset-btn" data-type="P">P Only</button>
-        <button class="preset-btn" data-type="PI">PI</button>
-        <button class="preset-btn active" data-type="PID">PID</button>
-      </div>
-      <div class="sec-label" style="margin-bottom:6px;">Performance Preset</div>
-      <div class="preset-row">
-        <button class="preset-btn" data-type="Conservative">Conservative</button>
-        <button class="preset-btn" data-type="Aggressive">Aggressive</button>
-      </div>
-    </div>
+    <div class="hdr-title">Control Insight Studio</div>
 
-    <div class="ctrl-box">
-      <div class="mono-label">CONTROLLER C(s)</div>
-
-      <!-- General symbolic form — always visible -->
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:10px 8px;text-align:center;margin-bottom:8px;">
-        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.5px;">General PID Form</div>
-        <table style="margin:0 auto;border-collapse:collapse;font-family:var(--mono);font-size:12px;color:var(--cyan);">
-          <tr>
-            <td rowspan="3" style="padding-right:4px;font-size:13px;vertical-align:middle;">C(s) =</td>
-            <td style="color:var(--blue);font-weight:600;text-align:center;padding:0 2px;">K<sub style="font-size:9px;">p</sub></td>
-            <td style="padding:0 5px;color:var(--muted);">+</td>
-            <td style="text-align:center;">
-              <div style="border-bottom:1px solid var(--cyan);padding:0 4px;font-size:11px;color:#a78bfa;">K<sub style="font-size:9px;">i</sub></div>
-              <div style="padding:0 4px;font-size:11px;">s</div>
-            </td>
-            <td style="padding:0 5px;color:var(--muted);">+</td>
-            <td style="color:var(--amber);font-weight:600;padding:0 2px;">K<sub style="font-size:9px;">d</sub> · s</td>
-          </tr>
-        </table>
-
-        <!-- Role annotations -->
-        <div style="display:flex;justify-content:space-between;margin-top:8px;padding:0 4px;">
-          <div style="text-align:center;flex:1;">
-            <div style="font-size:9px;color:var(--blue);font-weight:600;">Kp</div>
-            <div style="font-size:9px;color:var(--muted);line-height:1.4;">Proportional<br>Speed</div>
-          </div>
-          <div style="text-align:center;flex:1;">
-            <div style="font-size:9px;color:#a78bfa;font-weight:600;">Ki</div>
-            <div style="font-size:9px;color:var(--muted);line-height:1.4;">Integral<br>Steady-state</div>
-          </div>
-          <div style="text-align:center;flex:1;">
-            <div style="font-size:9px;color:var(--amber);font-weight:600;">Kd</div>
-            <div style="font-size:9px;color:var(--muted);line-height:1.4;">Derivative<br>Damping</div>
-          </div>
-        </div>
+    <div class="hdr-actions">
+      <div class="stab-pill stable" id="stabPill">
+        <span class="stab-dot" id="stabDot" style="background:var(--green);box-shadow:0 0 6px var(--green);"></span>
+        <span id="stabText">Stable</span>
       </div>
-
-      <!-- Live numeric instance -->
-      <div style="background:rgba(0,133,62,0.06);border:1px solid rgba(0,133,62,0.18);border-radius:5px;padding:8px 10px;text-align:center;">
-        <div style="font-size:10px;color:var(--unt-light);margin-bottom:5px;letter-spacing:0.5px;">Live Values</div>
-        <div id="ctrlDisplay" style="font-family:var(--mono);font-size:11px;color:var(--text);line-height:1.9;"></div>
-      </div>
+      <button class="hdr-btn" id="helpBtn">How to Use</button>
+      <button class="hdr-btn" id="themeBtn">Theme</button>
     </div>
   </div>
 
-  <!-- ── CENTER: PLOTS ── -->
-  <div class="center">
-
-    <!-- ROW 1: STEP RESPONSE -->
-    <div class="plot-card">
-      <div class="plot-hdr">
-        <span class="plot-name">② Closed-Loop Step Response</span>
-        <div class="plot-badges">
-          <span class="badge badge-green" id="b-rt">Tr: —</span>
-          <span class="badge badge-blue"  id="b-os">OS: —</span>
-          <span class="badge badge-cyan"  id="b-ts">Ts: —</span>
-          <span class="badge badge-red"   id="b-ess">ESS: —</span>
-        </div>
-      </div>
-      <div class="plot-body">
-        <div class="plotly-wrap" id="stepPlot"></div>
-        <div class="metrics-col">
-          <div class="mhdr">Time Domain</div>
-          <div class="mrow"><span class="mlbl">Rise Time</span><span class="mval cyan" id="valRt">—</span></div>
-          <div class="mrow"><span class="mlbl">Peak Time</span><span class="mval cyan" id="valPt">—</span></div>
-          <div class="mrow"><span class="mlbl">Overshoot</span><span class="mval" id="valOs">—</span></div>
-          <div class="mrow"><span class="mlbl">Settling 2%</span><span class="mval" id="valTs">—</span></div>
-          <div class="mrow"><span class="mlbl">SS Error</span><span class="mval" id="valEss">—</span></div>
-        </div>
-      </div>
+  <!-- HELP MODAL -->
+  <div class="modal-bg" id="helpModal">
+    <div class="modal-box">
+      <h2>How to Use Control Insight Studio</h2>
+      <p><strong>1. Select a Plant G(s):</strong> Choose a standard transfer function. For custom plants, select
+        "Custom" and enter numerator/denominator polynomial coefficients separated by commas (highest power first).</p>
+      <p><strong>2. Tune PID Gains:</strong> Use sliders for Kp, Ki, Kd or type values directly. All charts update in
+        real-time.</p>
+      <p><strong>3. Read the Step Response:</strong> Rise time, overshoot, and settling time are computed from the
+        closed-loop simulation. A dashed line marks the reference (1.0).</p>
+      <p><strong>4. Read the Bode Plots:</strong> Gain Margin (GM) and Phase Margin (PM) are marked. PM &gt; 45°
+        typically indicates robust stability.</p>
+      <p><strong>5. Pole Map:</strong> Blue × = dominant pole pair; gray × = other poles. All poles in the LHP (left of
+        imaginary axis) = stable.</p>
+      <button class="modal-close" id="closeHelp">Got it!</button>
     </div>
+  </div>
 
-    <!-- ROW 2: BODE -->
-    <div class="plot-card">
-      <div class="plot-hdr">
-        <span class="plot-name">③ Open-Loop Bode</span>
-        <div class="plot-badges">
-          <span class="badge badge-green" id="b-gm">GM: —</span>
-          <span class="badge badge-blue"  id="b-pm">PM: —</span>
+  <!-- WORKSPACE -->
+  <div class="workspace">
+
+    <!-- ── LEFT: CONTROLLER SETUP ── -->
+    <div class="sidebar">
+      <div class="sec-title">① Controller Setup</div>
+
+      <div class="sidebar-section">
+        <div class="sec-label">Plant G(s)</div>
+        <select id="plantSelect">
+          <option value="1">1st Order: 1/(s+1)</option>
+          <option value="2_under" selected>2nd Order (underdamped)</option>
+          <option value="2_over">2nd Order (overdamped)</option>
+          <option value="3">3rd Order</option>
+          <option value="unstable">Unstable Plant</option>
+          <option value="custom">Custom Transfer Function</option>
+        </select>
+
+        <div class="custom-block" id="customBlock">
+          <label>Numerator coefficients</label>
+          <input type="text" id="customNum" value="100" placeholder="e.g. 100">
+          <label>Denominator coefficients</label>
+          <input type="text" id="customDen" value="1, 2, 100" placeholder="e.g. 1, 2, 100">
+          <button class="apply-btn" id="applyCustom">Apply</button>
+        </div>
+
+        <div class="tf-box" id="mathDisplay">G(s) = ...</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sec-label">PID Gains</div>
+        <div class="slider-row">
+          <span class="slider-lbl" style="color:var(--blue)">Kp</span>
+          <input type="range" id="kpSlider" min="0" max="100" step="0.5" value="25">
+          <input type="number" class="num-input" id="kpVal" value="25" min="0" max="100" step="0.5">
+        </div>
+        <div class="slider-row">
+          <span class="slider-lbl" style="color:#a78bfa">Ki</span>
+          <input type="range" id="kiSlider" min="0" max="50" step="0.1" value="0">
+          <input type="number" class="num-input" id="kiVal" value="0" min="0" max="50" step="0.1">
+        </div>
+        <div class="slider-row">
+          <span class="slider-lbl" style="color:var(--amber)">Kd</span>
+          <input type="range" id="kdSlider" min="0" max="20" step="0.1" value="1">
+          <input type="number" class="num-input" id="kdVal" value="1" min="0" max="20" step="0.1">
         </div>
       </div>
-      <div class="plot-body">
-        <div class="bode-split">
-          <div class="bode-half">
-            <div class="bode-sublabel">MAGNITUDE</div>
-            <div id="bodeMagPlot" style="flex:1;width:100%;min-height:0;"></div>
-          </div>
-          <div class="bode-half">
-            <div class="bode-sublabel">PHASE</div>
-            <div id="bodePhasePlot" style="flex:1;width:100%;min-height:0;"></div>
+
+      <div class="sidebar-section">
+        <div class="sec-label" style="margin-bottom:6px;">Controller Type</div>
+        <div class="preset-row" style="margin-bottom:8px;">
+          <button class="preset-btn" data-type="P">P Only</button>
+          <button class="preset-btn" data-type="PI">PI</button>
+          <button class="preset-btn active" data-type="PID">PID</button>
+        </div>
+        <div class="sec-label" style="margin-bottom:6px;">Performance Preset</div>
+        <div class="preset-row">
+          <button class="preset-btn" data-type="Conservative">Conservative</button>
+          <button class="preset-btn" data-type="Aggressive">Aggressive</button>
+        </div>
+      </div>
+
+      <div class="ctrl-box">
+        <div class="mono-label">CONTROLLER C(s)</div>
+
+        <!-- General symbolic form — always visible -->
+        <div
+          style="background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:10px 8px;text-align:center;margin-bottom:8px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.5px;">General PID Form</div>
+          <table
+            style="margin:0 auto;border-collapse:collapse;font-family:var(--mono);font-size:12px;color:var(--cyan);">
+            <tr>
+              <td rowspan="3" style="padding-right:4px;font-size:13px;vertical-align:middle;">C(s) =</td>
+              <td style="color:var(--blue);font-weight:600;text-align:center;padding:0 2px;">K<sub
+                  style="font-size:9px;">p</sub></td>
+              <td style="padding:0 5px;color:var(--muted);">+</td>
+              <td style="text-align:center;">
+                <div style="border-bottom:1px solid var(--cyan);padding:0 4px;font-size:11px;color:#a78bfa;">K<sub
+                    style="font-size:9px;">i</sub></div>
+                <div style="padding:0 4px;font-size:11px;">s</div>
+              </td>
+              <td style="padding:0 5px;color:var(--muted);">+</td>
+              <td style="color:var(--amber);font-weight:600;padding:0 2px;">K<sub style="font-size:9px;">d</sub> · s
+              </td>
+            </tr>
+          </table>
+
+          <!-- Role annotations -->
+          <div style="display:flex;justify-content:space-between;margin-top:8px;padding:0 4px;">
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:9px;color:var(--blue);font-weight:600;">Kp</div>
+              <div style="font-size:9px;color:var(--muted);line-height:1.4;">Proportional<br>Speed</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:9px;color:#a78bfa;font-weight:600;">Ki</div>
+              <div style="font-size:9px;color:var(--muted);line-height:1.4;">Integral<br>Steady-state</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:9px;color:var(--amber);font-weight:600;">Kd</div>
+              <div style="font-size:9px;color:var(--muted);line-height:1.4;">Derivative<br>Damping</div>
+            </div>
           </div>
         </div>
-        <div class="metrics-col">
-          <div class="mhdr">Freq Domain</div>
-          <div class="mrow"><span class="mlbl">Gain Margin</span><span class="mval green" id="valGM">—</span></div>
-          <div class="mrow"><span class="mlbl">Phase Margin</span><span class="mval green" id="valPM">—</span></div>
-          <div class="mrow"><span class="mlbl">ωgc</span><span class="mval blue" id="valWgc">—</span></div>
-          <div class="mrow"><span class="mlbl">ωpc</span><span class="mval blue" id="valWpc">—</span></div>
-          <div class="mrow"><span class="mlbl">Bandwidth</span><span class="mval cyan" id="valBw">—</span></div>
+
+        <!-- Live numeric instance -->
+        <div
+          style="background:rgba(0,133,62,0.06);border:1px solid rgba(0,133,62,0.18);border-radius:5px;padding:8px 10px;text-align:center;">
+          <div style="font-size:10px;color:var(--unt-light);margin-bottom:5px;letter-spacing:0.5px;">Live Values</div>
+          <div id="ctrlDisplay" style="font-family:var(--mono);font-size:11px;color:var(--text);line-height:1.9;"></div>
         </div>
       </div>
     </div>
+
+    <!-- ── CENTER: PLOTS ── -->
+    <div class="center">
+
+      <!-- ROW 1: STEP RESPONSE -->
+      <div class="plot-card">
+        <div class="plot-hdr">
+          <span class="plot-name">② Closed-Loop Step Response</span>
+          <div class="plot-badges">
+            <span class="badge badge-green" id="b-rt">Tr: —</span>
+            <span class="badge badge-blue" id="b-os">OS: —</span>
+            <span class="badge badge-cyan" id="b-ts">Ts: —</span>
+            <span class="badge badge-red" id="b-ess">ESS: —</span>
+          </div>
+        </div>
+        <div class="plot-body">
+          <div class="plotly-wrap" id="stepPlot"></div>
+          <div class="metrics-col">
+            <div class="mhdr">Time Domain</div>
+            <div class="mrow"><span class="mlbl">Rise Time</span><span class="mval cyan" id="valRt">—</span></div>
+            <div class="mrow"><span class="mlbl">Peak Time</span><span class="mval cyan" id="valPt">—</span></div>
+            <div class="mrow"><span class="mlbl">Overshoot</span><span class="mval" id="valOs">—</span></div>
+            <div class="mrow"><span class="mlbl">Settling 2%</span><span class="mval" id="valTs">—</span></div>
+            <div class="mrow"><span class="mlbl">SS Error</span><span class="mval" id="valEss">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 2: BODE -->
+      <div class="plot-card">
+        <div class="plot-hdr">
+          <span class="plot-name">③ Open-Loop Bode</span>
+          <div class="plot-badges">
+            <span class="badge badge-green" id="b-gm">GM: —</span>
+            <span class="badge badge-blue" id="b-pm">PM: —</span>
+          </div>
+        </div>
+        <div class="plot-body">
+          <div class="bode-split">
+            <div class="bode-half">
+              <div class="bode-sublabel">MAGNITUDE</div>
+              <div id="bodeMagPlot" style="flex:1;width:100%;min-height:0;"></div>
+            </div>
+            <div class="bode-half">
+              <div class="bode-sublabel">PHASE</div>
+              <div id="bodePhasePlot" style="flex:1;width:100%;min-height:0;"></div>
+            </div>
+          </div>
+          <div class="metrics-col">
+            <div class="mhdr">Freq Domain</div>
+            <div class="mrow"><span class="mlbl">Gain Margin</span><span class="mval green" id="valGM">—</span></div>
+            <div class="mrow"><span class="mlbl">Phase Margin</span><span class="mval green" id="valPM">—</span></div>
+            <div class="mrow"><span class="mlbl">ωgc</span><span class="mval blue" id="valWgc">—</span></div>
+            <div class="mrow"><span class="mlbl">ωpc</span><span class="mval blue" id="valWpc">—</span></div>
+            <div class="mrow"><span class="mlbl">Bandwidth</span><span class="mval cyan" id="valBw">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: DIAGNOSIS ── -->
+    <div class="right-panel">
+      <div class="sec-title">④ Diagnosis</div>
+
+      <div class="sidebar-section" style="padding-bottom:10px;">
+        <div class="sec-label">Performance Checklist</div>
+        <div class="chk-item">
+          <span class="chk-lbl">Overshoot &lt; 20%</span>
+          <span class="chk-icon" id="chkOs" style="color:var(--green)">✓</span>
+        </div>
+        <div class="chk-item">
+          <span class="chk-lbl">Settling Time &lt; 2s</span>
+          <span class="chk-icon" id="chkTs" style="color:var(--green)">✓</span>
+        </div>
+        <div class="chk-item">
+          <span class="chk-lbl">SS Error &lt; 5%</span>
+          <span class="chk-icon" id="chkEss" style="color:var(--green)">✓</span>
+        </div>
+        <div class="chk-item" style="border-bottom:none;">
+          <span class="chk-lbl">Phase Margin &gt; 45°</span>
+          <span class="chk-icon" id="chkPM" style="color:var(--green)">✓</span>
+        </div>
+      </div>
+
+      <div class="sec-title">⑤ Closed-Loop Pole Map</div>
+
+      <div class="pole-map-wrap">
+        <div id="polePlot" style="width:100%;height:220px;"></div>
+      </div>
+
+      <div class="dom-pole" id="domPole">Complex Conjugate Pair<br>(Underdamped)</div>
+
+      <div class="pole-info-box" id="poleInfo"></div>
+
+      <div class="sec-title">⑥ Live Interpretation</div>
+      <div class="tip-box" id="liveTip">
+        Adjust gains and observe how the <strong>Phase Margin</strong> correlates with overshoot, and how pole locations
+        shift in the s-plane.
+      </div>
+    </div>
+
   </div>
 
-  <!-- ── RIGHT: DIAGNOSIS ── -->
-  <div class="right-panel">
-    <div class="sec-title">④ Diagnosis</div>
+  <script>
+    // ═══════════════ COMPLEX MATH ═══════════════
+    class Complex {
+      constructor(re, im) { this.re = re; this.im = im || 0; }
+      add(c) { return new Complex(this.re + c.re, this.im + c.im); }
+      sub(c) { return new Complex(this.re - c.re, this.im - c.im); }
+      mul(c) { return new Complex(this.re * c.re - this.im * c.im, this.re * c.im + this.im * c.re); }
+      div(c) { let d = c.re * c.re + c.im * c.im; return new Complex((this.re * c.re + this.im * c.im) / d, (this.im * c.re - this.re * c.im) / d); }
+      mag() { return Math.sqrt(this.re * this.re + this.im * this.im); }
+      phase() { return Math.atan2(this.im, this.re); }
+    }
+    function polyMul(a, b) { let r = new Array(a.length + b.length - 1).fill(0); for (let i = 0; i < a.length; i++)for (let j = 0; j < b.length; j++)r[i + j] += a[i] * b[j]; return r; }
+    function polyAdd(a, b) { let n = Math.max(a.length, b.length), r = new Array(n).fill(0); let ap = a.length < n ? [...Array(n - a.length).fill(0), ...a] : a, bp = b.length < n ? [...Array(n - b.length).fill(0), ...b] : b; for (let i = 0; i < n; i++)r[i] = ap[i] + bp[i]; return r; }
+    function polyEval(p, s) { let r = new Complex(0, 0); for (let i = 0; i < p.length; i++) { let pw = new Complex(1, 0); for (let j = 0; j < p.length - 1 - i; j++)pw = pw.mul(s); r = r.add(new Complex(p[i], 0).mul(pw)); } return r; }
 
-    <div class="sidebar-section" style="padding-bottom:10px;">
-      <div class="sec-label">Performance Checklist</div>
-      <div class="chk-item">
-        <span class="chk-lbl">Overshoot &lt; 20%</span>
-        <span class="chk-icon" id="chkOs" style="color:var(--green)">✓</span>
-      </div>
-      <div class="chk-item">
-        <span class="chk-lbl">Settling Time &lt; 2s</span>
-        <span class="chk-icon" id="chkTs" style="color:var(--green)">✓</span>
-      </div>
-      <div class="chk-item">
-        <span class="chk-lbl">SS Error &lt; 5%</span>
-        <span class="chk-icon" id="chkEss" style="color:var(--green)">✓</span>
-      </div>
-      <div class="chk-item" style="border-bottom:none;">
-        <span class="chk-lbl">Phase Margin &gt; 45°</span>
-        <span class="chk-icon" id="chkPM" style="color:var(--green)">✓</span>
-      </div>
-    </div>
+    function findRoots(p) {
+      let st = 0; while (st < p.length - 1 && Math.abs(p[st]) < 1e-10) st++; p = p.slice(st);
+      let n = p.length - 1; if (n <= 0) return [];
+      let a = p.map(v => v / p[0]), roots = [];
+      for (let i = 0; i < n; i++)roots.push(new Complex(Math.cos(2 * Math.PI * i / n + 0.1), Math.sin(2 * Math.PI * i / n + 0.1)));
+      for (let it = 0; it < 150; it++) {
+        let mx = 0, nr = [];
+        for (let i = 0; i < n; i++) {
+          let R = roots[i], num = polyEval(a, R), den = new Complex(1, 0);
+          for (let j = 0; j < n; j++)if (i !== j) den = den.mul(R.sub(roots[j]));
+          let off = num.div(den); nr.push(R.sub(off)); mx = Math.max(mx, off.mag());
+        }
+        roots = nr; if (mx < 1e-9) break;
+      }
+      return roots;
+    }
 
-    <div class="sec-title">⑤ Closed-Loop Pole Map</div>
+    // ═══════════════ RK4 SIMULATION ═══════════════
+    function simulate(num, den, tEnd, dt) {
+      let sn = 0; while (sn < num.length - 1 && Math.abs(num[sn]) < 1e-10) sn++;
+      let sd = 0; while (sd < den.length - 1 && Math.abs(den[sd]) < 1e-10) sd++;
+      let b = num.slice(sn), a = den.slice(sd);
+      let n = a.length - 1; if (n === 0) return { t: [0, tEnd], y: [b[0] / a[0], b[0] / a[0]] };
+      let an = a[0]; a = a.map(v => v / an); b = b.map(v => v / an);
+      while (b.length < n + 1) b.unshift(0);
+      let A = []; for (let i = 0; i < n; i++) { let row = new Array(n).fill(0); if (i < n - 1) row[i + 1] = 1; else for (let j = 0; j < n; j++)row[j] = -a[n - j]; A.push(row); }
+      let B = new Array(n).fill(0); B[n - 1] = 1;
+      let D = b[0], C = new Array(n).fill(0); for (let i = 0; i < n; i++)C[i] = b[n - i] - a[n - i] * D;
+      let t = [], y = [], x = new Array(n).fill(0);
+      let f = xv => { let dx = new Array(n).fill(0); for (let i = 0; i < n; i++) { let s = 0; for (let j = 0; j < n; j++)s += A[i][j] * xv[j]; dx[i] = s + B[i]; } return dx; };
+      for (let time = 0; time <= tEnd; time += dt) {
+        t.push(time); let yv = D; for (let i = 0; i < n; i++)yv += C[i] * x[i]; y.push(yv);
+        let k1 = f(x), x2 = x.map((v, i) => v + .5 * dt * k1[i]), k2 = f(x2), x3 = x.map((v, i) => v + .5 * dt * k2[i]), k3 = f(x3), x4 = x.map((v, i) => v + dt * k3[i]), k4 = f(x4);
+        for (let i = 0; i < n; i++)x[i] += dt / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+      }
+      return { t, y };
+    }
 
-    <div class="pole-map-wrap">
-      <div id="polePlot" style="width:100%;height:220px;"></div>
-    </div>
+    // ═══════════════ STATE & PLANTS ═══════════════
+    const S = { plant: '2_under', kp: 25, ki: 0, kd: 1, theme: 'dark' };
+    const Plants = {
+      '1': { num: [1], den: [1, 1], tex: '\\dfrac{1}{s+1}' },
+      '2_under': { num: [1], den: [1, 1, 1], tex: '\\dfrac{1}{s^2+s+1}' },
+      '2_over': { num: [1], den: [1, 3, 2], tex: '\\dfrac{1}{s^2+3s+2}' },
+      '3': { num: [1], den: [1, 6, 11, 6], tex: '\\dfrac{1}{s^3+6s^2+11s+6}' },
+      'unstable': { num: [1], den: [1, -1, 1], tex: '\\dfrac{1}{s^2-s+1}' },
+      'custom': { num: [100], den: [1, 2, 100], tex: '\\dfrac{100}{s^2+2s+100}' }
+    };
 
-    <div class="dom-pole" id="domPole">Complex Conjugate Pair<br>(Underdamped)</div>
+    function th() {
+      let dark = S.theme === 'dark';
+      return {
+        bg: 'transparent',
+        font: dark ? '#8a90a8' : '#64748b',
+        grid: dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
+        zero: dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)',
+        paper: 'transparent',
+        plot: 'transparent'
+      };
+    }
 
-    <div class="pole-info-box" id="poleInfo"></div>
+    // ═══════════════ UPDATE ═══════════════
+    function updateAll() {
+      let P = Plants[S.plant];
+      // TF display
+      document.getElementById('mathDisplay').innerHTML = `$$G(s)=${P.tex}$$`;
+      document.getElementById('ctrlDisplay').innerHTML =
+        `C(s) = <span style="color:var(--blue);font-weight:600;">${S.kp}</span>` +
+        ` + <span style="color:#a78bfa;font-weight:600;">${S.ki}</span><span style="color:var(--muted)">/s</span>` +
+        ` + <span style="color:var(--amber);font-weight:600;">${S.kd}</span><span style="color:var(--muted)">·s</span>`;
+      if (window.MathJax) MathJax.typesetPromise([document.getElementById('mathDisplay')]);
 
-    <div class="sec-title">⑥ Live Interpretation</div>
-    <div class="tip-box" id="liveTip">
-      Adjust gains and observe how the <strong>Phase Margin</strong> correlates with overshoot, and how pole locations shift in the s-plane.
-    </div>
-  </div>
+      // Build open-loop L(s) = C(s)·G(s)
+      let Cn = [S.kd, S.kp, S.ki], Cd = [1, 0];
+      let Ln = polyMul(Cn, P.num), Ld = polyMul(Cd, P.den);
+      let Tn = Ln, Td = polyAdd(Ld, Ln);
 
-</div>
+      // Step response
+      let { t, y } = simulate(Tn, Td, 12, 0.01);
+      let ss = y[y.length - 1], ymax = Math.max(...y), ixmax = y.indexOf(ymax);
+      let os = ss !== 0 ? Math.max(0, (ymax - ss) / Math.abs(ss) * 100) : 0;
+      let t10 = -1, t90 = -1;
+      for (let i = 0; i < y.length; i++) { if (t10 < 0 && y[i] >= .1 * ss) t10 = t[i]; if (t90 < 0 && y[i] >= .9 * ss) t90 = t[i]; }
+      let rt = (t10 >= 0 && t90 >= 0) ? t90 - t10 : 0;
+      let ts = 0; for (let i = y.length - 1; i >= 0; i--)if (Math.abs(y[i] - ss) > 0.02 * Math.abs(ss)) { ts = t[i]; break; }
+      let ess = Math.abs(1 - ss) * 100;
 
-<script>
-// ═══════════════ COMPLEX MATH ═══════════════
-class Complex {
-  constructor(re,im){this.re=re;this.im=im||0;}
-  add(c){return new Complex(this.re+c.re,this.im+c.im);}
-  sub(c){return new Complex(this.re-c.re,this.im-c.im);}
-  mul(c){return new Complex(this.re*c.re-this.im*c.im,this.re*c.im+this.im*c.re);}
-  div(c){let d=c.re*c.re+c.im*c.im;return new Complex((this.re*c.re+this.im*c.im)/d,(this.im*c.re-this.re*c.im)/d);}
-  mag(){return Math.sqrt(this.re*this.re+this.im*this.im);}
-  phase(){return Math.atan2(this.im,this.re);}
-}
-function polyMul(a,b){let r=new Array(a.length+b.length-1).fill(0);for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++)r[i+j]+=a[i]*b[j];return r;}
-function polyAdd(a,b){let n=Math.max(a.length,b.length),r=new Array(n).fill(0);let ap=a.length<n?[...Array(n-a.length).fill(0),...a]:a,bp=b.length<n?[...Array(n-b.length).fill(0),...b]:b;for(let i=0;i<n;i++)r[i]=ap[i]+bp[i];return r;}
-function polyEval(p,s){let r=new Complex(0,0);for(let i=0;i<p.length;i++){let pw=new Complex(1,0);for(let j=0;j<p.length-1-i;j++)pw=pw.mul(s);r=r.add(new Complex(p[i],0).mul(pw));}return r;}
+      // Update badges & metrics
+      document.getElementById('b-rt').textContent = `Tr: ${rt > 0 ? rt.toFixed(2) + 's' : '—'}`;
+      document.getElementById('b-os').textContent = `OS: ${os.toFixed(1)}%`;
+      document.getElementById('b-ts').textContent = `Ts: ${ts.toFixed(2)}s`;
+      document.getElementById('b-ess').textContent = `ESS: ${ess.toFixed(1)}%`;
+      document.getElementById('valRt').textContent = rt > 0 ? rt.toFixed(3) + 's' : '—';
+      document.getElementById('valPt').textContent = t[ixmax].toFixed(3) + 's';
+      let osEl = document.getElementById('valOs'); osEl.textContent = os.toFixed(1) + '%'; osEl.className = 'mval ' + (os < 20 ? 'green' : os < 30 ? 'yellow' : 'red');
+      let tsEl = document.getElementById('valTs'); tsEl.textContent = ts.toFixed(2) + 's'; tsEl.className = 'mval ' + (ts < 2 ? 'green' : ts < 5 ? 'yellow' : 'red');
+      let essEl = document.getElementById('valEss'); essEl.textContent = ess.toFixed(1) + '%'; essEl.className = 'mval ' + (ess < 5 ? 'green' : ess < 10 ? 'yellow' : 'red');
 
-function findRoots(p){
-  let st=0;while(st<p.length-1&&Math.abs(p[st])<1e-10)st++;p=p.slice(st);
-  let n=p.length-1;if(n<=0)return[];
-  let a=p.map(v=>v/p[0]),roots=[];
-  for(let i=0;i<n;i++)roots.push(new Complex(Math.cos(2*Math.PI*i/n+0.1),Math.sin(2*Math.PI*i/n+0.1)));
-  for(let it=0;it<150;it++){let mx=0,nr=[];
-    for(let i=0;i<n;i++){let R=roots[i],num=polyEval(a,R),den=new Complex(1,0);
-      for(let j=0;j<n;j++)if(i!==j)den=den.mul(R.sub(roots[j]));
-      let off=num.div(den);nr.push(R.sub(off));mx=Math.max(mx,off.mag());}
-    roots=nr;if(mx<1e-9)break;}
-  return roots;
-}
+      drawStep(t, y, ss, t[ixmax], ymax);
 
-// ═══════════════ RK4 SIMULATION ═══════════════
-function simulate(num,den,tEnd,dt){
-  let sn=0;while(sn<num.length-1&&Math.abs(num[sn])<1e-10)sn++;
-  let sd=0;while(sd<den.length-1&&Math.abs(den[sd])<1e-10)sd++;
-  let b=num.slice(sn),a=den.slice(sd);
-  let n=a.length-1;if(n===0)return{t:[0,tEnd],y:[b[0]/a[0],b[0]/a[0]]};
-  let an=a[0];a=a.map(v=>v/an);b=b.map(v=>v/an);
-  while(b.length<n+1)b.unshift(0);
-  let A=[];for(let i=0;i<n;i++){let row=new Array(n).fill(0);if(i<n-1)row[i+1]=1;else for(let j=0;j<n;j++)row[j]=-a[n-j];A.push(row);}
-  let B=new Array(n).fill(0);B[n-1]=1;
-  let D=b[0],C=new Array(n).fill(0);for(let i=0;i<n;i++)C[i]=b[n-i]-a[n-i]*D;
-  let t=[],y=[],x=new Array(n).fill(0);
-  let f=xv=>{let dx=new Array(n).fill(0);for(let i=0;i<n;i++){let s=0;for(let j=0;j<n;j++)s+=A[i][j]*xv[j];dx[i]=s+B[i];}return dx;};
-  for(let time=0;time<=tEnd;time+=dt){
-    t.push(time);let yv=D;for(let i=0;i<n;i++)yv+=C[i]*x[i];y.push(yv);
-    let k1=f(x),x2=x.map((v,i)=>v+.5*dt*k1[i]),k2=f(x2),x3=x.map((v,i)=>v+.5*dt*k2[i]),k3=f(x3),x4=x.map((v,i)=>v+dt*k3[i]),k4=f(x4);
-    for(let i=0;i<n;i++)x[i]+=dt/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]);
-  }
-  return{t,y};
-}
+      // Bode
+      let freqs = []; for (let i = -2; i <= 3; i += 0.015)freqs.push(Math.pow(10, i));
+      let mag = [], phase = [], pp = null;
+      for (let w of freqs) {
+        let s = new Complex(0, w);
+        let L = polyEval(Ln, s).div(polyEval(Ld, s));
+        let m = 20 * Math.log10(L.mag());
+        let p = L.phase() * 180 / Math.PI;
+        if (pp !== null) { while (p - pp > 180) p -= 360; while (p - pp < -180) p += 360; }
+        mag.push(m); phase.push(p); pp = p;
+      }
 
-// ═══════════════ STATE & PLANTS ═══════════════
-const S={plant:'2_under',kp:25,ki:0,kd:1,theme:'dark'};
-const Plants={
-  '1':{num:[1],den:[1,1],tex:'\\dfrac{1}{s+1}'},
-  '2_under':{num:[1],den:[1,1,1],tex:'\\dfrac{1}{s^2+s+1}'},
-  '2_over':{num:[1],den:[1,3,2],tex:'\\dfrac{1}{s^2+3s+2}'},
-  '3':{num:[1],den:[1,6,11,6],tex:'\\dfrac{1}{s^3+6s^2+11s+6}'},
-  'unstable':{num:[1],den:[1,-1,1],tex:'\\dfrac{1}{s^2-s+1}'},
-  'custom':{num:[100],den:[1,2,100],tex:'\\dfrac{100}{s^2+2s+100}'}
-};
+      let wgc = null, pm = null, wpc = null, gm = null;
+      for (let i = 0; i < freqs.length - 1; i++) {
+        if (mag[i] >= 0 && mag[i + 1] < 0) { let ti = -mag[i] / (mag[i + 1] - mag[i]); wgc = freqs[i] * Math.pow(freqs[i + 1] / freqs[i], ti); pm = 180 + (phase[i] + ti * (phase[i + 1] - phase[i])); }
+        if (phase[i] >= -180 && phase[i + 1] < -180) { let ti = (-180 - phase[i]) / (phase[i + 1] - phase[i]); wpc = freqs[i] * Math.pow(freqs[i + 1] / freqs[i], ti); gm = -(mag[i] + ti * (mag[i + 1] - mag[i])); }
+      }
 
-function th(){
-  let dark=S.theme==='dark';
-  return{
-    bg:'transparent',
-    font:dark?'#8a90a8':'#64748b',
-    grid:dark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)',
-    zero:dark?'rgba(255,255,255,0.15)':'rgba(0,0,0,0.15)',
-    paper:'transparent',
-    plot:'transparent'
-  };
-}
+      // Color-code margins
+      let gmEl = document.getElementById('valGM'), pmEl = document.getElementById('valPM');
+      gmEl.textContent = gm !== null ? gm.toFixed(1) + ' dB' : '∞ dB'; gmEl.className = 'mval ' + (gm === null || gm > 6 ? 'green' : gm > 0 ? 'yellow' : 'red');
+      pmEl.textContent = pm !== null ? pm.toFixed(1) + '°' : '∞°'; pmEl.className = 'mval ' + (pm === null || pm > 45 ? 'green' : pm > 15 ? 'yellow' : 'red');
+      document.getElementById('valWgc').textContent = wgc ? wgc.toFixed(2) + ' r/s' : '—';
+      document.getElementById('valWpc').textContent = wpc ? wpc.toFixed(2) + ' r/s' : '—';
+      document.getElementById('valBw').textContent = wgc ? (wgc * 1.5).toFixed(2) + ' r/s' : '—';
+      document.getElementById('b-gm').textContent = `GM: ${gm !== null ? gm.toFixed(1) + 'dB' : '∞'}`;
+      document.getElementById('b-pm').textContent = `PM: ${pm !== null ? pm.toFixed(1) + '°' : '∞'}`;
 
-// ═══════════════ UPDATE ═══════════════
-function updateAll(){
-  let P=Plants[S.plant];
-  // TF display
-  document.getElementById('mathDisplay').innerHTML=`$$G(s)=${P.tex}$$`;
-  document.getElementById('ctrlDisplay').innerHTML=
-    `C(s) = <span style="color:var(--blue);font-weight:600;">${S.kp}</span>` +
-    ` + <span style="color:#a78bfa;font-weight:600;">${S.ki}</span><span style="color:var(--muted)">/s</span>` +
-    ` + <span style="color:var(--amber);font-weight:600;">${S.kd}</span><span style="color:var(--muted)">·s</span>`;
-  if(window.MathJax)MathJax.typesetPromise([document.getElementById('mathDisplay')]);
+      drawBode(freqs, mag, phase, wgc, wpc, pm, gm);
 
-  // Build open-loop L(s) = C(s)·G(s)
-  let Cn=[S.kd,S.kp,S.ki],Cd=[1,0];
-  let Ln=polyMul(Cn,P.num),Ld=polyMul(Cd,P.den);
-  let Tn=Ln,Td=polyAdd(Ld,Ln);
+      // Poles
+      let poles = findRoots(Td);
+      let stable = poles.every(p => p.re < 1e-4);
+      let marginal = !stable && poles.every(p => p.re < 0.05);
+      let unstable = poles.some(p => p.re > 1e-4);
 
-  // Step response
-  let{t,y}=simulate(Tn,Td,12,0.01);
-  let ss=y[y.length-1],ymax=Math.max(...y),ixmax=y.indexOf(ymax);
-  let os=ss!==0?Math.max(0,(ymax-ss)/Math.abs(ss)*100):0;
-  let t10=-1,t90=-1;
-  for(let i=0;i<y.length;i++){if(t10<0&&y[i]>=.1*ss)t10=t[i];if(t90<0&&y[i]>=.9*ss)t90=t[i];}
-  let rt=(t10>=0&&t90>=0)?t90-t10:0;
-  let ts=0;for(let i=y.length-1;i>=0;i--)if(Math.abs(y[i]-ss)>0.02*Math.abs(ss)){ts=t[i];break;}
-  let ess=Math.abs(1-ss)*100;
+      let pill = document.getElementById('stabPill'), dot = document.getElementById('stabDot'), txt = document.getElementById('stabText');
+      if (unstable) { pill.className = 'stab-pill unstable'; dot.style.background = 'var(--red)'; dot.style.boxShadow = '0 0 6px var(--red)'; txt.textContent = 'Unstable'; }
+      else if (marginal) { pill.className = 'stab-pill marginal'; dot.style.background = 'var(--yellow)'; dot.style.boxShadow = '0 0 6px var(--yellow)'; txt.textContent = 'Marginal'; }
+      else { pill.className = 'stab-pill stable'; dot.style.background = 'var(--green)'; dot.style.boxShadow = '0 0 6px var(--green)'; txt.textContent = 'Stable'; }
 
-  // Update badges & metrics
-  document.getElementById('b-rt').textContent=`Tr: ${rt>0?rt.toFixed(2)+'s':'—'}`;
-  document.getElementById('b-os').textContent=`OS: ${os.toFixed(1)}%`;
-  document.getElementById('b-ts').textContent=`Ts: ${ts.toFixed(2)}s`;
-  document.getElementById('b-ess').textContent=`ESS: ${ess.toFixed(1)}%`;
-  document.getElementById('valRt').textContent=rt>0?rt.toFixed(3)+'s':'—';
-  document.getElementById('valPt').textContent=t[ixmax].toFixed(3)+'s';
-  let osEl=document.getElementById('valOs');osEl.textContent=os.toFixed(1)+'%';osEl.className='mval '+(os<20?'green':os<30?'yellow':'red');
-  let tsEl=document.getElementById('valTs');tsEl.textContent=ts.toFixed(2)+'s';tsEl.className='mval '+(ts<2?'green':ts<5?'yellow':'red');
-  let essEl=document.getElementById('valEss');essEl.textContent=ess.toFixed(1)+'%';essEl.className='mval '+(ess<5?'green':ess<10?'yellow':'red');
+      // Checklist
+      let chk = (id, pass) => { let el = document.getElementById(id); el.textContent = pass ? '✓' : '⚠'; el.style.color = pass ? 'var(--green)' : 'var(--amber)'; };
+      chk('chkOs', os < 20); chk('chkTs', ts < 2); chk('chkEss', ess < 5); chk('chkPM', pm === null || pm > 45);
 
-  drawStep(t,y,ss,t[ixmax],ymax);
+      // Dom pole
+      let maxRe = poles.reduce((m, p) => Math.max(m, p.re), -Infinity);
+      let domP = poles.find(p => p.re === maxRe) || poles[0];
+      let domTxt = '';
+      if (!domP) domTxt = '—';
+      else if (Math.abs(domP.im) < 0.01) domTxt = 'Real Pole\n(No oscillation)';
+      else if (domP.re < 0) domTxt = 'Complex Conjugate Pair\n(Underdamped)';
+      else domTxt = 'Unstable Pole\n(Right Half Plane!)';
+      document.getElementById('domPole').textContent = domTxt;
 
-  // Bode
-  let freqs=[];for(let i=-2;i<=3;i+=0.015)freqs.push(Math.pow(10,i));
-  let mag=[],phase=[],pp=null;
-  for(let w of freqs){
-    let s=new Complex(0,w);
-    let L=polyEval(Ln,s).div(polyEval(Ld,s));
-    let m=20*Math.log10(L.mag());
-    let p=L.phase()*180/Math.PI;
-    if(pp!==null){while(p-pp>180)p-=360;while(p-pp<-180)p+=360;}
-    mag.push(m);phase.push(p);pp=p;
-  }
+      // Pole info
+      let pInfo = ''; poles.forEach((p, i) => {
+        let re = p.re.toFixed(3), im = (p.im >= 0 ? '+' : '') + p.im.toFixed(3);
+        pInfo += `p${i + 1} = ${re} ${im}j\n`;
+      });
+      document.getElementById('poleInfo').textContent = pInfo;
 
-  let wgc=null,pm=null,wpc=null,gm=null;
-  for(let i=0;i<freqs.length-1;i++){
-    if(mag[i]>=0&&mag[i+1]<0){let ti=-mag[i]/(mag[i+1]-mag[i]);wgc=freqs[i]*Math.pow(freqs[i+1]/freqs[i],ti);pm=180+(phase[i]+ti*(phase[i+1]-phase[i]));}
-    if(phase[i]>=-180&&phase[i+1]<-180){let ti=(-180-phase[i])/(phase[i+1]-phase[i]);wpc=freqs[i]*Math.pow(freqs[i+1]/freqs[i],ti);gm=-(mag[i]+ti*(mag[i+1]-mag[i]));}
-  }
+      // Live tip
+      let tip = '';
+      if (unstable) tip = 'System is unstable — poles in RHP. Reduce Kp or increase Kd to move poles left.';
+      else if (pm !== null && pm < 20) tip = `PM = ${pm.toFixed(0)}°: very low. Expect heavy oscillation. Increase Kd for more damping.`;
+      else if (pm !== null && pm < 45) tip = `PM = ${pm.toFixed(0)}°: moderate stability. Overshoot ≈ ${os.toFixed(0)}%. Increasing Kd improves PM.`;
+      else if (os > 25) tip = 'Overshoot is high. Increase Kd to damp the response without sacrificing speed.';
+      else if (ess > 5) tip = 'Steady-state error detected. A non-zero Ki will eliminate it via integral action.';
+      else if (ts > 4) tip = 'Settling time is slow. Increase Kp to speed up the response, but monitor overshoot.';
+      else tip = `Well-tuned! PM = ${pm !== null ? pm.toFixed(0) + '°' : '∞'}, OS = ${os.toFixed(1)}%, SSE = ${ess.toFixed(1)}%. Good balance of speed and stability.`;
+      document.getElementById('liveTip').innerHTML = tip.replace(/PM\s*=/g, '<strong>PM</strong> =').replace(/OS\s*=/g, '<strong>OS</strong> =').replace(/SSE\s*=/g, '<strong>SSE</strong> =').replace(/Kp/g, '<strong>Kp</strong>').replace(/Kd/g, '<strong>Kd</strong>').replace(/Ki/g, '<strong>Ki</strong>');
 
-  // Color-code margins
-  let gmEl=document.getElementById('valGM'),pmEl=document.getElementById('valPM');
-  gmEl.textContent=gm!==null?gm.toFixed(1)+' dB':'∞ dB'; gmEl.className='mval '+(gm===null||gm>6?'green':gm>0?'yellow':'red');
-  pmEl.textContent=pm!==null?pm.toFixed(1)+'°':'∞°'; pmEl.className='mval '+(pm===null||pm>45?'green':pm>15?'yellow':'red');
-  document.getElementById('valWgc').textContent=wgc?wgc.toFixed(2)+' r/s':'—';
-  document.getElementById('valWpc').textContent=wpc?wpc.toFixed(2)+' r/s':'—';
-  document.getElementById('valBw').textContent=wgc?(wgc*1.5).toFixed(2)+' r/s':'—';
-  document.getElementById('b-gm').textContent=`GM: ${gm!==null?gm.toFixed(1)+'dB':'∞'}`;
-  document.getElementById('b-pm').textContent=`PM: ${pm!==null?pm.toFixed(1)+'°':'∞'}`;
+      drawPoles(poles);
+    }
 
-  drawBode(freqs,mag,phase,wgc,wpc,pm,gm);
+    // ═══════════════ PLOTS ═══════════════
+    const PLT = { responsive: true, displayModeBar: false };
 
-  // Poles
-  let poles=findRoots(Td);
-  let stable=poles.every(p=>p.re<1e-4);
-  let marginal=!stable&&poles.every(p=>p.re<0.05);
-  let unstable=poles.some(p=>p.re>1e-4);
+    function drawStep(t, y, ss, pt, ymax) {
+      let c = th();
+      let step = Math.max(1, Math.floor(t.length / 400));
+      let ts = [], ys = []; for (let i = 0; i < t.length; i += step) { ts.push(t[i]); ys.push(y[i]); }
+      let traces = [
+        { x: ts, y: ys, mode: 'lines', line: { color: '#00a84f', width: 2.5 }, name: 'Output' },
+        { x: [0, t[t.length - 1]], y: [1, 1], mode: 'lines', line: { color: 'rgba(255,255,255,0.2)', dash: 'dot', width: 1 }, name: 'Reference' }
+      ];
+      if (ymax > 1.05) {
+        traces.push({ x: [pt], y: [ymax], mode: 'markers+text', marker: { symbol: 'circle', size: 7, color: '#ff6b6b' }, text: [` ${(ymax * 100).toFixed(1)}%`], textposition: 'top right', textfont: { size: 10, color: '#ff6b6b' }, name: 'Peak' });
+      }
+      Plotly.react('stepPlot', traces, {
+        margin: { l: 42, r: 8, t: 8, b: 34 }, paper_bgcolor: c.paper, plot_bgcolor: c.plot,
+        font: { color: c.font, family: 'IBM Plex Mono', size: 10 },
+        xaxis: { title: { text: 'Time (s)', font: { size: 10 } }, gridcolor: c.grid, zerolinecolor: c.zero, tickfont: { size: 9 } },
+        yaxis: { title: { text: 'Amplitude', font: { size: 10 } }, gridcolor: c.grid, zerolinecolor: c.zero, tickfont: { size: 9 } },
+        showlegend: false
+      }, PLT);
+    }
 
-  let pill=document.getElementById('stabPill'),dot=document.getElementById('stabDot'),txt=document.getElementById('stabText');
-  if(unstable){pill.className='stab-pill unstable';dot.style.background='var(--red)';dot.style.boxShadow='0 0 6px var(--red)';txt.textContent='Unstable';}
-  else if(marginal){pill.className='stab-pill marginal';dot.style.background='var(--yellow)';dot.style.boxShadow='0 0 6px var(--yellow)';txt.textContent='Marginal';}
-  else{pill.className='stab-pill stable';dot.style.background='var(--green)';dot.style.boxShadow='0 0 6px var(--green)';txt.textContent='Stable';}
+    function drawBode(freqs, mag, phase, wgc, wpc, pm, gm) {
+      let c = th();
+      let base = { margin: { l: 44, r: 8, t: 8, b: 30 }, paper_bgcolor: c.paper, plot_bgcolor: c.plot, font: { color: c.font, family: 'IBM Plex Mono', size: 9 }, showlegend: false };
+      let xax = { type: 'log', title: { text: 'Frequency (rad/s)', font: { size: 9 } }, gridcolor: c.grid, zerolinecolor: c.zero, tickfont: { size: 8 } };
 
-  // Checklist
-  let chk=(id,pass)=>{let el=document.getElementById(id);el.textContent=pass?'✓':'⚠';el.style.color=pass?'var(--green)':'var(--amber)';};
-  chk('chkOs',os<20); chk('chkTs',ts<2); chk('chkEss',ess<5); chk('chkPM',pm===null||pm>45);
+      // Magnitude annotations
+      let magAnnotations = [];
+      if (wgc) { magAnnotations.push({ x: Math.log10(wgc), y: 0, xref: 'x', yref: 'y', text: `ωgc=${wgc.toFixed(2)}`, showarrow: true, arrowhead: 2, arrowcolor: '#3d8ef0', ax: 20, ay: -20, font: { color: '#3d8ef0', size: 8 } }); }
 
-  // Dom pole
-  let maxRe=poles.reduce((m,p)=>Math.max(m,p.re),-Infinity);
-  let domP=poles.find(p=>p.re===maxRe)||poles[0];
-  let domTxt='';
-  if(!domP)domTxt='—';
-  else if(Math.abs(domP.im)<0.01)domTxt='Real Pole\n(No oscillation)';
-  else if(domP.re<0)domTxt='Complex Conjugate Pair\n(Underdamped)';
-  else domTxt='Unstable Pole\n(Right Half Plane!)';
-  document.getElementById('domPole').textContent=domTxt;
+      Plotly.react('bodeMagPlot',
+        [{ x: freqs, y: mag, mode: 'lines', line: { color: '#00a84f', width: 2 }, name: 'Mag' },
+        { x: [freqs[0], freqs[freqs.length - 1]], y: [0, 0], mode: 'lines', line: { color: 'rgba(255,255,255,0.15)', dash: 'dot', width: 1 } }],
+        { ...base, xaxis: xax, yaxis: { title: { text: 'dB', font: { size: 9 } }, gridcolor: c.grid, zerolinecolor: c.zero, tickfont: { size: 8 } }, annotations: magAnnotations }, PLT);
 
-  // Pole info
-  let pInfo='';poles.forEach((p,i)=>{
-    let re=p.re.toFixed(3),im=(p.im>=0?'+':'')+p.im.toFixed(3);
-    pInfo+=`p${i+1} = ${re} ${im}j\n`;
-  });
-  document.getElementById('poleInfo').textContent=pInfo;
+      let phAnnotations = [];
+      if (wpc && pm !== null) { phAnnotations.push({ x: Math.log10(wpc), y: -180, xref: 'x', yref: 'y', text: `PM=${pm.toFixed(1)}°`, showarrow: true, arrowhead: 2, arrowcolor: '#3d8ef0', ax: 20, ay: -20, font: { color: '#3d8ef0', size: 8 } }); }
 
-  // Live tip
-  let tip='';
-  if(unstable)tip='System is unstable — poles in RHP. Reduce Kp or increase Kd to move poles left.';
-  else if(pm!==null&&pm<20)tip=`PM = ${pm.toFixed(0)}°: very low. Expect heavy oscillation. Increase Kd for more damping.`;
-  else if(pm!==null&&pm<45)tip=`PM = ${pm.toFixed(0)}°: moderate stability. Overshoot ≈ ${os.toFixed(0)}%. Increasing Kd improves PM.`;
-  else if(os>25)tip='Overshoot is high. Increase Kd to damp the response without sacrificing speed.';
-  else if(ess>5)tip='Steady-state error detected. A non-zero Ki will eliminate it via integral action.';
-  else if(ts>4)tip='Settling time is slow. Increase Kp to speed up the response, but monitor overshoot.';
-  else tip=`Well-tuned! PM = ${pm!==null?pm.toFixed(0)+'°':'∞'}, OS = ${os.toFixed(1)}%, SSE = ${ess.toFixed(1)}%. Good balance of speed and stability.`;
-  document.getElementById('liveTip').innerHTML=tip.replace(/PM\s*=/g,'<strong>PM</strong> =').replace(/OS\s*=/g,'<strong>OS</strong> =').replace(/SSE\s*=/g,'<strong>SSE</strong> =').replace(/Kp/g,'<strong>Kp</strong>').replace(/Kd/g,'<strong>Kd</strong>').replace(/Ki/g,'<strong>Ki</strong>');
+      Plotly.react('bodePhasePlot',
+        [{ x: freqs, y: phase, mode: 'lines', line: { color: '#3d8ef0', width: 2 }, name: 'Phase' },
+        { x: [freqs[0], freqs[freqs.length - 1]], y: [-180, -180], mode: 'lines', line: { color: 'rgba(240,162,61,0.3)', dash: 'dot', width: 1 } }],
+        { ...base, xaxis: xax, yaxis: { title: { text: 'deg', font: { size: 9 } }, gridcolor: c.grid, zerolinecolor: c.zero, tickfont: { size: 8 } }, annotations: phAnnotations }, PLT);
+    }
 
-  drawPoles(poles);
-}
+    function drawPoles(poles) {
+      let c = th();
+      let maxR = 4; for (let p of poles) maxR = Math.max(maxR, Math.abs(p.re) * 1.4, Math.abs(p.im) * 1.4);
 
-// ═══════════════ PLOTS ═══════════════
-const PLT={responsive:true,displayModeBar:false};
+      // Sort by real part to find dominant
+      let sorted = [...poles].sort((a, b) => b.re - a.re);
+      let dom = sorted[0];
 
-function drawStep(t,y,ss,pt,ymax){
-  let c=th();
-  let step=Math.max(1,Math.floor(t.length/400));
-  let ts=[],ys=[];for(let i=0;i<t.length;i+=step){ts.push(t[i]);ys.push(y[i]);}
-  let traces=[
-    {x:ts,y:ys,mode:'lines',line:{color:'#00a84f',width:2.5},name:'Output'},
-    {x:[0,t[t.length-1]],y:[1,1],mode:'lines',line:{color:'rgba(255,255,255,0.2)',dash:'dot',width:1},name:'Reference'}
-  ];
-  if(ymax>1.05){
-    traces.push({x:[pt],y:[ymax],mode:'markers+text',marker:{symbol:'circle',size:7,color:'#ff6b6b'},text:[` ${(ymax*100).toFixed(1)}%`],textposition:'top right',textfont:{size:10,color:'#ff6b6b'},name:'Peak'});
-  }
-  Plotly.react('stepPlot',traces,{
-    margin:{l:42,r:8,t:8,b:34},paper_bgcolor:c.paper,plot_bgcolor:c.plot,
-    font:{color:c.font,family:'IBM Plex Mono',size:10},
-    xaxis:{title:{text:'Time (s)',font:{size:10}},gridcolor:c.grid,zerolinecolor:c.zero,tickfont:{size:9}},
-    yaxis:{title:{text:'Amplitude',font:{size:10}},gridcolor:c.grid,zerolinecolor:c.zero,tickfont:{size:9}},
-    showlegend:false
-  },PLT);
-}
+      // Split dominant vs other
+      let domX = [], domY = [], othX = [], othY = [];
+      poles.forEach(p => {
+        if (p === dom || (Math.abs(p.re - dom.re) < 0.01 && Math.abs(p.im + dom.im) < 0.01 && Math.abs(p.im) > 0.01)) {
+          domX.push(p.re); domY.push(p.im);
+        } else { othX.push(p.re); othY.push(p.im); }
+      });
 
-function drawBode(freqs,mag,phase,wgc,wpc,pm,gm){
-  let c=th();
-  let base={margin:{l:44,r:8,t:8,b:30},paper_bgcolor:c.paper,plot_bgcolor:c.plot,font:{color:c.font,family:'IBM Plex Mono',size:9},showlegend:false};
-  let xax={type:'log',title:{text:'Frequency (rad/s)',font:{size:9}},gridcolor:c.grid,zerolinecolor:c.zero,tickfont:{size:8}};
-  
-  // Magnitude annotations
-  let magAnnotations=[];
-  if(wgc){magAnnotations.push({x:Math.log10(wgc),y:0,xref:'x',yref:'y',text:`ωgc=${wgc.toFixed(2)}`,showarrow:true,arrowhead:2,arrowcolor:'#3d8ef0',ax:20,ay:-20,font:{color:'#3d8ef0',size:8}});}
-  
-  Plotly.react('bodeMagPlot',
-    [{x:freqs,y:mag,mode:'lines',line:{color:'#00a84f',width:2},name:'Mag'},
-     {x:[freqs[0],freqs[freqs.length-1]],y:[0,0],mode:'lines',line:{color:'rgba(255,255,255,0.15)',dash:'dot',width:1}}],
-    {...base,xaxis:xax,yaxis:{title:{text:'dB',font:{size:9}},gridcolor:c.grid,zerolinecolor:c.zero,tickfont:{size:8}},annotations:magAnnotations},PLT);
+      Plotly.react('polePlot',
+        [{ x: othX, y: othY, mode: 'markers', marker: { symbol: 'x', size: 9, color: '#6b7494', line: { width: 2, color: '#6b7494' } }, name: 'Other' },
+        { x: domX, y: domY, mode: 'markers', marker: { symbol: 'x', size: 11, color: '#3d8ef0', line: { width: 2.5, color: '#3d8ef0' } }, name: 'Dominant' }],
+        {
+          margin: { l: 44, r: 8, t: 8, b: 30 }, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+          font: { color: c.font, family: 'IBM Plex Mono', size: 9 }, showlegend: false,
+          xaxis: { title: { text: 'Real (σ)', font: { size: 9 } }, gridcolor: c.grid, zeroline: true, zerolinewidth: 1.5, zerolinecolor: c.zero, range: [-maxR, maxR], tickfont: { size: 8 } },
+          yaxis: { title: { text: 'Imag (jω)', font: { size: 9 } }, gridcolor: c.grid, zeroline: true, zerolinewidth: 1.5, zerolinecolor: c.zero, range: [-maxR, maxR], tickfont: { size: 8 }, scaleanchor: 'x' }
+        }, PLT);
+    }
 
-  let phAnnotations=[];
-  if(wpc&&pm!==null){phAnnotations.push({x:Math.log10(wpc),y:-180,xref:'x',yref:'y',text:`PM=${pm.toFixed(1)}°`,showarrow:true,arrowhead:2,arrowcolor:'#3d8ef0',ax:20,ay:-20,font:{color:'#3d8ef0',size:8}});}
+    // ═══════════════ BIND EVENTS ═══════════════
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      S.theme = S.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', S.theme);
+      updateAll();
+    });
+    document.getElementById('helpBtn').addEventListener('click', () => document.getElementById('helpModal').classList.add('show'));
+    document.getElementById('closeHelp').addEventListener('click', () => document.getElementById('helpModal').classList.remove('show'));
 
-  Plotly.react('bodePhasePlot',
-    [{x:freqs,y:phase,mode:'lines',line:{color:'#3d8ef0',width:2},name:'Phase'},
-     {x:[freqs[0],freqs[freqs.length-1]],y:[-180,-180],mode:'lines',line:{color:'rgba(240,162,61,0.3)',dash:'dot',width:1}}],
-    {...base,xaxis:xax,yaxis:{title:{text:'deg',font:{size:9}},gridcolor:c.grid,zerolinecolor:c.zero,tickfont:{size:8}},annotations:phAnnotations},PLT);
-}
+    document.getElementById('plantSelect').addEventListener('change', e => {
+      S.plant = e.target.value;
+      document.getElementById('customBlock').style.display = S.plant === 'custom' ? 'block' : 'none';
+      if (S.plant !== 'custom') updateAll();
+    });
+    document.getElementById('applyCustom').addEventListener('click', () => {
+      let n = document.getElementById('customNum').value.split(',').map(s => parseFloat(s.trim()));
+      let d = document.getElementById('customDen').value.split(',').map(s => parseFloat(s.trim()));
+      if (n.some(isNaN) || d.some(isNaN)) return alert('Invalid coefficients');
+      while (n.length > 1 && Math.abs(n[0]) < 1e-10) n.shift();
+      while (d.length > 1 && Math.abs(d[0]) < 1e-10) d.shift();
+      if (n.length > d.length) return alert('Improper transfer function: numerator degree cannot exceed denominator degree');
+      Plants.custom.num = n; Plants.custom.den = d;
+      updateAll();
+    });
 
-function drawPoles(poles){
-  let c=th();
-  let maxR=4;for(let p of poles)maxR=Math.max(maxR,Math.abs(p.re)*1.4,Math.abs(p.im)*1.4);
-  
-  // Sort by real part to find dominant
-  let sorted=[...poles].sort((a,b)=>b.re-a.re);
-  let dom=sorted[0];
-  
-  // Split dominant vs other
-  let domX=[],domY=[],othX=[],othY=[];
-  poles.forEach(p=>{
-    if(p===dom||(Math.abs(p.re-dom.re)<0.01&&Math.abs(p.im+dom.im)<0.01&&Math.abs(p.im)>0.01)){
-      domX.push(p.re);domY.push(p.im);
-    } else { othX.push(p.re);othY.push(p.im); }
-  });
+    ['kp', 'ki', 'kd'].forEach(k => {
+      let sl = document.getElementById(`${k}Slider`), vi = document.getElementById(`${k}Val`);
+      sl.addEventListener('input', e => { S[k] = parseFloat(e.target.value); vi.value = S[k]; updateAll(); });
+      vi.addEventListener('change', e => { S[k] = parseFloat(e.target.value) || 0; sl.value = S[k]; updateAll(); });
+    });
 
-  Plotly.react('polePlot',
-    [{x:othX,y:othY,mode:'markers',marker:{symbol:'x',size:9,color:'#6b7494',line:{width:2,color:'#6b7494'}},name:'Other'},
-     {x:domX,y:domY,mode:'markers',marker:{symbol:'x',size:11,color:'#3d8ef0',line:{width:2.5,color:'#3d8ef0'}},name:'Dominant'}],
-    {
-      margin:{l:44,r:8,t:8,b:30},paper_bgcolor:'transparent',plot_bgcolor:'transparent',
-      font:{color:c.font,family:'IBM Plex Mono',size:9},showlegend:false,
-      xaxis:{title:{text:'Real (σ)',font:{size:9}},gridcolor:c.grid,zeroline:true,zerolinewidth:1.5,zerolinecolor:c.zero,range:[-maxR,maxR],tickfont:{size:8}},
-      yaxis:{title:{text:'Imag (jω)',font:{size:9}},gridcolor:c.grid,zeroline:true,zerolinewidth:1.5,zerolinecolor:c.zero,range:[-maxR,maxR],tickfont:{size:8},scaleanchor:'x'}
-    },PLT);
-}
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        let type = e.target.dataset.type;
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        if (type === 'P') { S.kp = 25; S.ki = 0; S.kd = 0; }
+        else if (type === 'PI') { S.kp = 15; S.ki = 10; S.kd = 0; }
+        else if (type === 'PID') { S.kp = 25; S.ki = 0; S.kd = 1; }
+        else if (type === 'Conservative') { S.kp = 5; S.ki = 1; S.kd = 0.5; }
+        else if (type === 'Aggressive') { S.kp = 80; S.ki = 10; S.kd = 5; }
+        document.getElementById('kpSlider').value = S.kp; document.getElementById('kpVal').value = S.kp;
+        document.getElementById('kiSlider').value = S.ki; document.getElementById('kiVal').value = S.ki;
+        document.getElementById('kdSlider').value = S.kd; document.getElementById('kdVal').value = S.kd;
+        updateAll();
+      });
+    });
 
-// ═══════════════ BIND EVENTS ═══════════════
-document.getElementById('themeBtn').addEventListener('click',()=>{
-  S.theme=S.theme==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',S.theme);
-  updateAll();
-});
-document.getElementById('helpBtn').addEventListener('click',()=>document.getElementById('helpModal').classList.add('show'));
-document.getElementById('closeHelp').addEventListener('click',()=>document.getElementById('helpModal').classList.remove('show'));
+    window.addEventListener('resize', () => {
+      ['stepPlot', 'bodeMagPlot', 'bodePhasePlot', 'polePlot'].forEach(id => Plotly.Plots.resize(id));
+    });
 
-document.getElementById('plantSelect').addEventListener('change',e=>{
-  S.plant=e.target.value;
-  document.getElementById('customBlock').style.display=S.plant==='custom'?'block':'none';
-  if(S.plant!=='custom')updateAll();
-});
-document.getElementById('applyCustom').addEventListener('click',()=>{
-  let n=document.getElementById('customNum').value.split(',').map(s=>parseFloat(s.trim()));
-  let d=document.getElementById('customDen').value.split(',').map(s=>parseFloat(s.trim()));
-  if(n.some(isNaN)||d.some(isNaN))return alert('Invalid coefficients');
-  while(n.length>1&&Math.abs(n[0])<1e-10)n.shift();
-  while(d.length>1&&Math.abs(d[0])<1e-10)d.shift();
-  if(n.length>d.length)return alert('Improper transfer function: numerator degree cannot exceed denominator degree');
-  Plants.custom.num=n;Plants.custom.den=d;
-  updateAll();
-});
-
-['kp','ki','kd'].forEach(k=>{
-  let sl=document.getElementById(`${k}Slider`),vi=document.getElementById(`${k}Val`);
-  sl.addEventListener('input',e=>{S[k]=parseFloat(e.target.value);vi.value=S[k];updateAll();});
-  vi.addEventListener('change',e=>{S[k]=parseFloat(e.target.value)||0;sl.value=S[k];updateAll();});
-});
-
-document.querySelectorAll('.preset-btn').forEach(btn=>{
-  btn.addEventListener('click',e=>{
-    let type=e.target.dataset.type;
-    document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
-    e.target.classList.add('active');
-    if(type==='P'){S.kp=25;S.ki=0;S.kd=0;}
-    else if(type==='PI'){S.kp=15;S.ki=10;S.kd=0;}
-    else if(type==='PID'){S.kp=25;S.ki=0;S.kd=1;}
-    else if(type==='Conservative'){S.kp=5;S.ki=1;S.kd=0.5;}
-    else if(type==='Aggressive'){S.kp=80;S.ki=10;S.kd=5;}
-    document.getElementById('kpSlider').value=S.kp;document.getElementById('kpVal').value=S.kp;
-    document.getElementById('kiSlider').value=S.ki;document.getElementById('kiVal').value=S.ki;
-    document.getElementById('kdSlider').value=S.kd;document.getElementById('kdVal').value=S.kd;
-    updateAll();
-  });
-});
-
-window.addEventListener('resize',()=>{
-  ['stepPlot','bodeMagPlot','bodePhasePlot','polePlot'].forEach(id=>Plotly.Plots.resize(id));
-});
-
-document.addEventListener('DOMContentLoaded',updateAll);
-</script>
+    document.addEventListener('DOMContentLoaded', updateAll);
+  </script>
 </body>
+
 </html>
