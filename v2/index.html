@@ -325,8 +325,8 @@ select:focus { border-color: var(--unt); }
 .bode-half { flex: 1; min-height: 0; position: relative; border-bottom: 1px solid var(--border); }
 .bode-half:last-child { border-bottom: none; }
 .bode-sublabel {
-  position: absolute; top: 6px; left: 14px;
-  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  position: absolute; top: 6px; left: 44px;
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
   color: var(--muted); letter-spacing: 0.5px; z-index: 2;
 }
 
@@ -898,7 +898,7 @@ function drawStep(t,y,ss,pt,ymax){
 
 function drawBode(freqs,mag,phase,wgc,wpc,pm,gm){
   let c=th();
-  let base={margin:{l:44,r:8,t:8,b:30},paper_bgcolor:c.paper,plot_bgcolor:c.plot,font:{color:c.font,family:'IBM Plex Mono',size:9},showlegend:false};
+  let base={margin:{l:44,r:8,t:24,b:30},paper_bgcolor:c.paper,plot_bgcolor:c.plot,font:{color:c.font,family:'IBM Plex Mono',size:9},showlegend:false};
   let xax={type:'log',title:{text:'Frequency (rad/s)',font:{size:9}},gridcolor:c.grid,zerolinecolor:c.zero,tickfont:{size:8}};
   
   // Magnitude annotations
