@@ -322,10 +322,10 @@ select:focus { border-color: var(--unt); }
 
 /* BODE SPLIT */
 .bode-split { flex: 1; display: flex; flex-direction: column; min-height: 0; }
-.bode-half { flex: 1; min-height: 0; position: relative; border-bottom: 1px solid var(--border); }
+.bode-half { flex: 1; min-height: 0; position: relative; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
 .bode-half:last-child { border-bottom: none; }
 .bode-sublabel {
-  position: absolute; top: 6px; left: 44px;
+  margin: 8px 0 0 44px; flex-shrink: 0;
   font-family: var(--mono); font-size: 10px; font-weight: 600;
   color: var(--muted); letter-spacing: 0.5px; z-index: 2;
 }
@@ -625,11 +625,11 @@ select:focus { border-color: var(--unt); }
         <div class="bode-split">
           <div class="bode-half">
             <div class="bode-sublabel">MAGNITUDE</div>
-            <div id="bodeMagPlot" style="width:100%;height:100%;"></div>
+            <div id="bodeMagPlot" style="flex:1;width:100%;min-height:0;"></div>
           </div>
           <div class="bode-half">
             <div class="bode-sublabel">PHASE</div>
-            <div id="bodePhasePlot" style="width:100%;height:100%;"></div>
+            <div id="bodePhasePlot" style="flex:1;width:100%;min-height:0;"></div>
           </div>
         </div>
         <div class="metrics-col">
@@ -898,7 +898,7 @@ function drawStep(t,y,ss,pt,ymax){
 
 function drawBode(freqs,mag,phase,wgc,wpc,pm,gm){
   let c=th();
-  let base={margin:{l:44,r:8,t:24,b:30},paper_bgcolor:c.paper,plot_bgcolor:c.plot,font:{color:c.font,family:'IBM Plex Mono',size:9},showlegend:false};
+  let base={margin:{l:44,r:8,t:8,b:30},paper_bgcolor:c.paper,plot_bgcolor:c.plot,font:{color:c.font,family:'IBM Plex Mono',size:9},showlegend:false};
   let xax={type:'log',title:{text:'Frequency (rad/s)',font:{size:9}},gridcolor:c.grid,zerolinecolor:c.zero,tickfont:{size:8}};
   
   // Magnitude annotations
