@@ -787,6 +787,37 @@
       background: var(--border);
       margin: 4px 16px;
     }
+
+    /* OMEGA_N / ZETA BOX */
+    .plant-params-box {
+      display: none;
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      background: rgba(61,142,240,0.07);
+      border: 1px solid rgba(61,142,240,0.22);
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 2;
+    }
+    .plant-params-box .param-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+    .plant-params-box .param-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(61,142,240,0.12);
+      padding: 2px 0;
+    }
+    .plant-params-box .param-row:last-child { border-bottom: none; }
+    .plant-params-box .param-lbl { color: var(--muted); font-size: 11px; }
+    .plant-params-box .param-val { color: var(--cyan); font-weight: 600; font-size: 12px; }
   </style>
 </head>
 
@@ -865,6 +896,28 @@
         </div>
 
         <div class="tf-box" id="mathDisplay">G(s) = ...</div>
+
+        <!-- 2nd Order Plant Parameters -->
+        <div class="plant-params-box" id="plantParamsBox">
+          <div class="param-title">Closed-Loop 2nd-Order Params</div>
+          <div style="font-size:12px;font-weight: 600;line-height:1.7;color:var(--muted);margin-bottom:6px;line-height:1.5;">T(s) denom: s&#178; + 2&zeta;&omega;<sub>n</sub>s + &omega;<sub>n</sub>&#178;</div>
+          <div class="param-row">
+            <span class="param-lbl">&omega;<sub>n</sub> (Natural Freq)</span>
+            <span class="param-val" id="valOmegaN">&mdash;</span>
+          </div>
+          <div class="param-row">
+            <span class="param-lbl">&zeta; (Damping Ratio)</span>
+            <span class="param-val" id="valZeta">&mdash;</span>
+          </div>
+          <div class="param-row">
+            <span class="param-lbl">&omega;<sub>d</sub> (Damped Freq)</span>
+            <span class="param-val" id="valOmegaD">&mdash;</span>
+          </div>
+          <div class="param-row">
+            <span class="param-lbl">Type</span>
+            <span class="param-val" id="valDampType">&mdash;</span>
+          </div>
+        </div>
       </div>
 
       <div class="sidebar-section">
@@ -1145,9 +1198,47 @@
       if (window.MathJax) MathJax.typesetPromise([document.getElementById('mathDisplay')]);
 
       // Build open-loop L(s) = C(s)·G(s)
-      let Cn = [S.kd, S.kp, S.ki], Cd = [1, 0];
+      // Important fix:
+      // Do NOT always write PID as (Kd*s^2 + Kp*s + Ki)/s.
+      // If Ki = 0, there is no true integrator, so using /s creates a fake pole at s = 0.
+      // That fake pole makes the closed-loop denominator 3rd order and prevents ωn and ζ from displaying.
+      let Cn, Cd;
+      if (Math.abs(S.ki) > 1e-10) {
+        // Full PID / PI controller: C(s) = (Kd*s^2 + Kp*s + Ki)/s
+        Cn = [S.kd, S.kp, S.ki];
+        Cd = [1, 0];
+      } else if (Math.abs(S.kd) > 1e-10) {
+        // PD controller: C(s) = Kd*s + Kp
+        Cn = [S.kd, S.kp];
+        Cd = [1];
+      } else {
+        // P-only controller: C(s) = Kp
+        Cn = [S.kp];
+        Cd = [1];
+      }
+
       let Ln = polyMul(Cn, P.num), Ld = polyMul(Cd, P.den);
       let Tn = Ln, Td = polyAdd(Ld, Ln);
+
+      // ── 2nd-Order Closed-Loop Parameters (ωn, ζ) ──
+      // Compare closed-loop denom Td with s² + 2ζωn·s + ωn²
+      // e.g. for Kp=5, G=1/(s²+s+1): Td = [1,1,6] → ωn=√6, ζ=1/(2√6)
+      const paramsBox = document.getElementById('plantParamsBox');
+      // Normalize Td by leading coefficient
+      let TdNorm = Td.map(v => v / Td[0]);
+      const is2nd = (TdNorm.length === 3);
+      paramsBox.style.display = is2nd ? 'block' : 'none';
+      if (is2nd) {
+        // TdNorm = [1, 2ζωn, ωn²]
+        let wn   = Math.sqrt(Math.abs(TdNorm[2]));
+        let zeta = wn > 0 ? TdNorm[1] / (2 * wn) : 0;
+        let wd   = wn * Math.sqrt(Math.max(0, 1 - zeta * zeta));
+        let dtype = zeta < 0 ? 'Unstable' : zeta === 0 ? 'Undamped' : zeta < 1 ? 'Underdamped' : zeta === 1 ? 'Critically Damped' : 'Overdamped';
+        document.getElementById('valOmegaN').textContent = wn.toFixed(4) + ' rad/s';
+        document.getElementById('valZeta').textContent   = zeta.toFixed(4);
+        document.getElementById('valOmegaD').textContent = wd.toFixed(4) + ' rad/s';
+        document.getElementById('valDampType').textContent = dtype;
+      }
 
       // Step response
       let { t, y } = simulate(Tn, Td, 12, 0.01);
