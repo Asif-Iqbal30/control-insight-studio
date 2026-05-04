@@ -913,10 +913,6 @@
             <span class="param-lbl">&omega;<sub>d</sub> (Damped Freq)</span>
             <span class="param-val" id="valOmegaD">&mdash;</span>
           </div>
-          <div class="param-row">
-            <span class="param-lbl">Type</span>
-            <span class="param-val" id="valDampType">&mdash;</span>
-          </div>
         </div>
       </div>
 
@@ -1233,11 +1229,9 @@
         let wn   = Math.sqrt(Math.abs(TdNorm[2]));
         let zeta = wn > 0 ? TdNorm[1] / (2 * wn) : 0;
         let wd   = wn * Math.sqrt(Math.max(0, 1 - zeta * zeta));
-        let dtype = zeta < 0 ? 'Unstable' : zeta === 0 ? 'Undamped' : zeta < 1 ? 'Underdamped' : zeta === 1 ? 'Critically Damped' : 'Overdamped';
         document.getElementById('valOmegaN').textContent = wn.toFixed(4) + ' rad/s';
         document.getElementById('valZeta').textContent   = zeta.toFixed(4);
         document.getElementById('valOmegaD').textContent = wd.toFixed(4) + ' rad/s';
-        document.getElementById('valDampType').textContent = dtype;
       }
 
       // Step response
